@@ -1,29 +1,40 @@
-# Welcome ty TypedScripts!
+# The cleanest way to run Shell scripts from C# ...
 
-TypedScripts brings strongly-typed bash scripts to your C# project.
+TypedScripts makes shell scripts strongly typed objects with a clean execution interface.
 
 ## Quick Start
 
-1. Install the nuget package
+**Install the package**
 
 ```bash
 nuget install TypedScripts
 ```
 
-Or use your IDEs built in nuget manager.
+**Make your script parseable**
 
-2. Make your bash scripts parseable
+TypedScripts works by honoring a few basic convetions.
 
-At the top of your script define arguments like so:
+1. Set script compile-property to `Additional Text` 
+2. Define parameters via comments, one line one parameter
+3. Parse arguments yourself
+
+Here is a simple example:
 
 ```bash
 #!/bin/bash
-# @param date:string --date required
-# @param port:int --port default=8080
-# @param verbose:bool --verbose
+# @param date:string required
+# @param port:int default=8080
+# @param verbose:bool
+
+date_value="$1"
+port_value="${2}"
+verbose="${3:-false}"
+
+echo "Running on date: $date_value"
+echo "Port: $port_value"
+echo "Verbose mode: $verbose"
 ```
 
-> You must still parse arguments yourself!
+> Notice the `required` and `default` parameter flags? Those are handled via C#.
 
-3. Run the script from C#
-
+**Execute your script**
