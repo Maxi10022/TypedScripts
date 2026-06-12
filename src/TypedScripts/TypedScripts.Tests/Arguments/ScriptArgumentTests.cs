@@ -17,7 +17,8 @@ public class ScriptArgumentTests
             type: "hobbits",
             name: "species",
             required: false,
-            defaultValue: null
+            defaultValue: null,
+            argName: null
         );
         
         // Act & Assert
@@ -33,7 +34,8 @@ public class ScriptArgumentTests
             type: "int",
             name: "species",
             required: false,
-            defaultValue: "gandalf"
+            defaultValue: "gandalf",
+            argName: null
         );
         
         // Act & Assert
@@ -50,7 +52,8 @@ public class ScriptArgumentTests
             type: type,
             name: "myParameter", 
             required: true, 
-            defaultValue: defaultValue
+            defaultValue: defaultValue,
+            argName: null
         );
 
         // Act
@@ -72,7 +75,8 @@ public class ScriptArgumentTests
             type: type,
             name: "myParameter", 
             required: false, 
-            defaultValue: defaultValue
+            defaultValue: defaultValue,
+            argName: null
         );
 
         // Act
@@ -94,7 +98,8 @@ public class ScriptArgumentTests
             type: type, 
             name: "example", 
             required: false, 
-            defaultValue: ""
+            defaultValue: "",
+            argName: null
         );
 
         // Act
@@ -115,7 +120,8 @@ public class ScriptArgumentTests
             type: type, 
             name: "example", 
             required: false, 
-            defaultValue: "null"
+            defaultValue: "null",
+            argName: null
         );
 
         // Act
@@ -136,7 +142,8 @@ public class ScriptArgumentTests
             type: type, 
             name: "example", 
             required: false, 
-            defaultValue: null
+            defaultValue: null,
+            argName: null
         );
 
         // Act
@@ -157,7 +164,8 @@ public class ScriptArgumentTests
             type: type, 
             name: "name", 
             required: true, 
-            defaultValue: null
+            defaultValue: null,
+            argName: null
         );
 
         // Act

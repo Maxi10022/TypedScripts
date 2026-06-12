@@ -7,12 +7,25 @@ using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace TypedScripts.Arguments;
 
-public class ScriptArgument(int position, string type, string name, bool required, string? defaultValue)
+public class ScriptArgument
 {
-    public int Position { get; } = position;
+    /// <summary>
+    /// Position of this argument
+    /// </summary>
+    public int Position { get; } 
+    
+    /// <summary>
+    /// Name of the argument if defined as named argument.
+    /// </summary>
+    public string? ArgName { get; }
+    
+    /// <summary>
+    /// The scripts parameter syntax.
+    /// </summary>
+    public ParameterSyntax Syntax { get; }
 
     /// <summary>
-    /// Build the C# syntax for a defined script argument.
+    /// Initializes and validates syntax for a defined script argument.
     /// </summary>
     /// <returns>Complete <see cref="ParameterSyntax"/></returns>
     /// <exception cref="UnsupportedArgumentTypeException">
@@ -25,31 +38,39 @@ public class ScriptArgument(int position, string type, string name, bool require
     /// Thrown when the default argument is invalid for the given C# type.
     /// (e.g. the default string "hobbit" for an integer)  
     /// </exception>
-    public ParameterSyntax Build()
+    public ScriptArgument(int position, string type, string name, bool required, string? defaultValue, string? argName)
+    {
+        Position = position;
+        ArgName = argName;
+        Syntax = Build(type: type, name: name, required: required, defaultValue: defaultValue);
+    }
+
+    private static ParameterSyntax Build(string type, string name, bool required, string? defaultValue)
     {
         if (!SupportedArgumentTypes.IsSupportedArgumentType(type))
         {
             throw new UnsupportedArgumentTypeException(type);
         }
         
-        var syntaxType = GetTypeSyntax();
+        var syntaxType = GetTypeSyntax(type: type, required: required);
         
         var parameter = Parameter(Identifier(name))
             .WithType(syntaxType);
 
         return (defaultValue is not null 
-            ? parameter.WithDefault(EqualsValueClause(GetDefaultLiteralExpression())) 
+            ? parameter.WithDefault(
+                EqualsValueClause(GetDefaultLiteralExpression(type: type, defaultValue: defaultValue))) 
             : parameter).NormalizeWhitespace(); // Normalize white-spaces for both
     }
     
-    public override string ToString() => Build().ToFullString();
+    public override string ToString() => Syntax.ToFullString();
     
-    private TypeSyntax GetTypeSyntax() =>
+    private static TypeSyntax GetTypeSyntax(string type, bool required) =>
         required 
             ? ParseTypeName(type) 
             : NullableType(ParseTypeName(type));
 
-    private LiteralExpressionSyntax GetDefaultLiteralExpression()
+    private static LiteralExpressionSyntax GetDefaultLiteralExpression(string type, string defaultValue)
     {
         // Handle default value set to null.
         if (string.IsNullOrWhiteSpace(defaultValue) || defaultValue!.Equals("null", StringComparison.OrdinalIgnoreCase))
@@ -60,7 +81,7 @@ public class ScriptArgument(int position, string type, string name, bool require
         // defaultValue is not null since we call this method only in a protected branch!
         try
         {
-            return GetFormattedType() switch
+            return GetFormattedType(type) switch
             {
                 "string" => LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(defaultValue!)),
                 "char" => LiteralExpression(SyntaxKind.CharacterLiteralExpression, Literal(char.Parse(defaultValue!))),
@@ -91,5 +112,5 @@ public class ScriptArgument(int position, string type, string name, bool require
             LiteralExpression(SyntaxKind.NumericLiteralExpression, token);
     }
 
-    private string GetFormattedType() => type.ToLower();
+    private static string GetFormattedType(string type) => type.ToLower();
 }
