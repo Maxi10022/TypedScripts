@@ -11,35 +11,35 @@ public class ScriptArgumentTests
     [Fact]
     public void Using_Unsupported_Type_Throws()
     {
-        // Arrange
-        var arg = new ScriptArgument(
-            position: 0,
-            type: "hobbits",
-            name: "species",
-            required: false,
-            defaultValue: null,
-            argName: null
-        );
-        
-        // Act & Assert
-        Assert.Throws<UnsupportedArgumentTypeException>(arg.ToString);
+        // Arrange & Act & Assert
+        Assert.Throws<UnsupportedArgumentTypeException>(() =>
+        {
+            _ = new ScriptArgument(
+                position: 0,
+                type: "hobbits",
+                name: "species",
+                required: false,
+                defaultValue: null,
+                argName: null
+            );
+        });
     }
     
     [Fact]
     public void Using_Invalid_Default_Value_Throws()
     {
-        // Arrange
-        var arg = new ScriptArgument(
-            position: 0,
-            type: "int",
-            name: "species",
-            required: false,
-            defaultValue: "gandalf",
-            argName: null
-        );
-        
-        // Act & Assert
-        Assert.Throws<InvalidArgumentDefaultException>(arg.ToString);
+        // Arrange & Act & Assert
+        Assert.Throws<InvalidArgumentDefaultException>(() =>
+        {
+            _ = new ScriptArgument(
+                position: 0,
+                type: "int",
+                name: "species",
+                required: false,
+                defaultValue: "gandalf",
+                argName: null
+            );
+        });
     }
     
     [Theory]
