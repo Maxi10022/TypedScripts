@@ -15,4 +15,9 @@
         <AdditionalFiles Include="DDD.UbiquitousLanguageRegistry.txt"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="backup-database.sh"/>
+        <AdditionalFiles Include="backup-database.sh"/>
+    </ItemGroup>
+
 </Project>
