@@ -5,6 +5,8 @@ namespace TypedScripts.Arguments;
 
 public static class ArgumentDiagnostics
 {
+    // TODO pass down file reference and incorporate into diagnostic to make this error speaking 
+    
     public static DiagnosticDescriptor UnsupportedArgumentType(UnsupportedArgumentTypeException ex) => new(
         id: "TSARG001",
         title: "Unsupported argument type",
@@ -23,9 +25,17 @@ public static class ArgumentDiagnostics
         isEnabledByDefault: true
     );
     
+    public static DiagnosticDescriptor InvalidParameterIdentifier(InvalidParameterIdentifierException ex) => new(
+        id: "TSARG002",
+        title: "Invalid parameter identifier",
+        messageFormat: ex.Message,
+        category: "TypedScripts", 
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
     
     public static DiagnosticDescriptor UnsupportedArgumentDefault(UnsupportedArgumentDefaultException ex) => new(
-        id: "TSARG003",
+        id: "TSARG004",
         title: "Unsupported argument default",
         messageFormat: ex.Message,
         category: "TypedScripts",

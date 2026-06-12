@@ -15,9 +15,14 @@ public class ScriptArgument
     public int Position { get; } 
     
     /// <summary>
-    /// Name of the argument if defined as named argument.
+    /// Name of the CLI argument if defined as named argument.
     /// </summary>
     public string? ArgName { get; }
+    
+    /// <summary>
+    /// Argument name used in C#.
+    /// </summary>
+    public string Name { get; }
     
     /// <summary>
     /// The scripts parameter syntax.
@@ -42,6 +47,7 @@ public class ScriptArgument
     {
         Position = position;
         ArgName = argName;
+        Name = name;
         Syntax = Build(type: type, name: name, required: required, defaultValue: defaultValue);
     }
 
@@ -50,6 +56,11 @@ public class ScriptArgument
         if (!SupportedArgumentTypes.IsSupportedArgumentType(type))
         {
             throw new UnsupportedArgumentTypeException(type);
+        }
+
+        if (!SyntaxFacts.IsValidIdentifier(name))
+        {
+            throw new InvalidParameterIdentifierException(name);
         }
         
         var syntaxType = GetTypeSyntax(type: type, required: required);

@@ -41,6 +41,23 @@ public class ScriptArgumentTests
             );
         });
     }
+
+    [Fact]
+    public void Given_Invalid_CSharp_Identifier_Name_Throws()
+    {
+        // Arrange & Act & Assert
+        Assert.Throws<InvalidParameterIdentifierException>(() =>
+        {
+            var x = new ScriptArgument(
+                position: 0,
+                type: "string",
+                name: "species-type",
+                required: false,
+                defaultValue: "dwarf",
+                argName: null
+            );
+        });
+    }
     
     [Theory]
     [MemberData(nameof(SupportedArgumentTypesWithDefaultValue))]

@@ -28,6 +28,7 @@ public static class ArgumentParser
         @"\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
     
+    // TODO Pass down file reference, which in turn gets passed down to diagnostics to make them helpful 
     public static IEnumerable<ScriptArgumentParseResult> ParseArguments(SourceText text)
     {
         var index = 0;
@@ -81,6 +82,11 @@ public static class ArgumentParser
         {
             return ScriptArgumentParseResult.Failure(
                 ArgumentDiagnostics.UnsupportedArgumentType(ex));
+        }
+        catch (InvalidParameterIdentifierException ex)
+        {
+            return ScriptArgumentParseResult.Failure(
+                ArgumentDiagnostics.InvalidParameterIdentifier(ex));
         }
         catch (UnsupportedArgumentDefaultException ex)
         {
