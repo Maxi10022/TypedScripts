@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TypedScripts.Runtime;
+namespace TypedScripts;
 
 // TODO consider omitting the *.Runtime namespace suffix for simplicity for consumers and codegen alike.
 

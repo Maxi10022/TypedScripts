@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TypedScripts.Runtime;
+namespace TypedScripts;
 
 public static class TypedScriptsOptions
 {

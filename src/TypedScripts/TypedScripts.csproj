@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- Runtime side: Common.dll next to Runtime.dll in lib -->
+        <!-- Package side: Common under lib -->
         <None Include="..\TypedScripts.Common\bin\$(Configuration)\netstandard2.0\TypedScripts.Common.dll"
               PackagePath="lib/netstandard2.0"
               Visible="false"
