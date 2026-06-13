@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TypedScripts.Common;
 
-namespace TypedScripts.Core;
+namespace TypedScripts.Runtime;
 
 // TODO come up with the rest of the infrastructure side of shell running things
 // This includes some base implementations for CMD, PowerShell, bash, sh, zsh and SSH.

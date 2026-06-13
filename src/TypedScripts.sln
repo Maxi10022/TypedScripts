@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Sample", "Type
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Tests", "TypedScripts\TypedScripts.Tests\TypedScripts.Tests.csproj", "{1E86B3BD-FF32-4DD8-91DE-D648781CDDAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Core", "TypedScripts.Core\TypedScripts.Core.csproj", "{3AD97A87-6527-4BD7-837B-911163A193CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Runtime", "TypedScripts.Runtime\TypedScripts.Runtime.csproj", "{3AD97A87-6527-4BD7-837B-911163A193CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Common", "TypedScripts.Common\TypedScripts.Common.csproj", "{05ADF597-B873-423C-B99C-B4FADED5B2A0}"
 EndProject
