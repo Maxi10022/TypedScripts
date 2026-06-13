@@ -15,7 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TypedScripts.Common\TypedScripts.Common.csproj" />
+        <ProjectReference Include="..\TypedScripts.Common\TypedScripts.Common.csproj" PrivateAssets="all" />
         <ProjectReference Include="..\TypedScripts.Generator\TypedScripts.Generator.csproj"
                           ReferenceOutputAssembly="false"
                           OutputItemType="Analyzer"
@@ -23,15 +23,21 @@
     </ItemGroup>
 
     <ItemGroup>
-        <!-- Package Generator and Common dependency into analyzers -->
+        <!-- Runtime side: Common.dll next to Runtime.dll in lib -->
+        <None Include="..\TypedScripts.Common\bin\$(Configuration)\netstandard2.0\TypedScripts.Common.dll"
+              PackagePath="lib/netstandard2.0"
+              Visible="false"
+              Pack="true" />
+
+        <!-- Analyzer side: the generator plus its Common dependency under analyzers -->
         <None Include="..\TypedScripts.Generator\bin\$(Configuration)\netstandard2.0\TypedScripts.Generator.dll"
               PackagePath="analyzers/dotnet/cs"
               Visible="false"
               Pack="true" />
-        
+
         <None Include="..\TypedScripts.Common\bin\$(Configuration)\netstandard2.0\TypedScripts.Common.dll"
-              PackagePath="analyzers/dotnet/cs" 
-              Visible="false" 
+              PackagePath="analyzers/dotnet/cs"
+              Visible="false"
               Pack="true" />
     </ItemGroup>
 </Project>
