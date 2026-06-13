@@ -1,5 +1,5 @@
-using System.Linq;
 using Microsoft.CodeAnalysis.Text;
+using System.Linq;
 using TypedScripts.Arguments.Parser;
 using Xunit;
 

@@ -20,6 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\TypedScripts.Generator\TypedScripts.Generator.csproj" />
         <ProjectReference Include="..\TypedScripts\TypedScripts.csproj"/>
     </ItemGroup>
 
