@@ -10,6 +10,11 @@ public class ScriptArgumentParseResult
     public bool IsFailure => Argument is null;
     
     /// <summary>
+    /// The arguments line number.
+    /// </summary>
+    public int LineNumber { get; }
+    
+    /// <summary>
     /// Indicates the argument was parsed.
     /// </summary>
     public bool IsSuccess => !IsFailure;
@@ -23,14 +28,18 @@ public class ScriptArgumentParseResult
     
     public ScriptArgument? Argument { get; }
     
-    private ScriptArgumentParseResult(ScriptArgument? argument, DiagnosticDescriptor[] problems)
+    private ScriptArgumentParseResult(ScriptArgument? argument, int lineNumber, DiagnosticDescriptor[] problems)
     {
         Problems = problems;
         Argument = argument;
+        LineNumber = lineNumber;
     }
     
     public static ScriptArgumentParseResult Success(
-        ScriptArgument argument, params DiagnosticDescriptor[] problems) => new(argument, problems);
+        ScriptArgument argument, params DiagnosticDescriptor[] problems) => 
+        new(argument, argument.LineNumber, problems);
     
-    public static ScriptArgumentParseResult Failure(params DiagnosticDescriptor[] problems) => new(null, problems);
+    public static ScriptArgumentParseResult Failure(
+        int lineNumber, params DiagnosticDescriptor[] problems) => 
+        new(null, lineNumber, problems);
 }

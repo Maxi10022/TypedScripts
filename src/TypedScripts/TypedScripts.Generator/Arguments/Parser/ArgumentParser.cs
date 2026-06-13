@@ -40,14 +40,14 @@ public static class ArgumentParser
             var match = ParamPattern.Match(content);
             if (!match.Success) continue;
             
-            var result = ParseSingleArgument(match, index);
+            var result = ParseSingleArgument(match, index: index, lineNumber: textLine.LineNumber);
             if (result.IsSuccess) index++;
             
             yield return result;
         }
     }
 
-    private static ScriptArgumentParseResult ParseSingleArgument(Match match, int index)
+    private static ScriptArgumentParseResult ParseSingleArgument(Match match, int index, int lineNumber)
     {
         ScriptArgument arg;
 
@@ -66,6 +66,7 @@ public static class ArgumentParser
             arg = new ScriptArgument(
                 name: name,
                 type: type,
+                lineNumber: lineNumber,
                 required: required,
                 defaultValue: defaultValue,
                 argName: argName,
@@ -76,22 +77,22 @@ public static class ArgumentParser
         catch (InvalidArgumentDefaultException ex)
         {
             return ScriptArgumentParseResult.Failure(
-                ArgumentDiagnostics.InvalidArgumentDefault(ex));
+                lineNumber, ArgumentDiagnostics.InvalidArgumentDefault(ex));
         }
         catch (UnsupportedArgumentTypeException ex)
         {
             return ScriptArgumentParseResult.Failure(
-                ArgumentDiagnostics.UnsupportedArgumentType(ex));
+                lineNumber, ArgumentDiagnostics.UnsupportedArgumentType(ex));
         }
         catch (InvalidParameterIdentifierException ex)
         {
             return ScriptArgumentParseResult.Failure(
-                ArgumentDiagnostics.InvalidParameterIdentifier(ex));
+                lineNumber, ArgumentDiagnostics.InvalidParameterIdentifier(ex));
         }
         catch (UnsupportedArgumentDefaultException ex)
         {
             return ScriptArgumentParseResult.Failure(
-                ArgumentDiagnostics.UnsupportedArgumentDefault(ex));
+                lineNumber, ArgumentDiagnostics.UnsupportedArgumentDefault(ex));
         }
         
         // Return constructed argument

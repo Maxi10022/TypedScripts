@@ -18,6 +18,7 @@ public class ScriptArgumentTests
                 position: 0,
                 type: "hobbits",
                 name: "species",
+                lineNumber: 0,
                 required: false,
                 defaultValue: null,
                 argName: null
@@ -35,6 +36,7 @@ public class ScriptArgumentTests
                 position: 0,
                 type: "int",
                 name: "species",
+                lineNumber: 0,
                 required: false,
                 defaultValue: "gandalf",
                 argName: null
@@ -52,6 +54,7 @@ public class ScriptArgumentTests
                 position: 0,
                 type: "string",
                 name: "species-type",
+                lineNumber: 0,
                 required: false,
                 defaultValue: "dwarf",
                 argName: null
@@ -68,6 +71,7 @@ public class ScriptArgumentTests
             position: 0, 
             type: type,
             name: "myParameter", 
+            lineNumber: 0,
             required: true, 
             defaultValue: defaultValue,
             argName: null
@@ -91,6 +95,7 @@ public class ScriptArgumentTests
             position: 0, 
             type: type,
             name: "myParameter", 
+            lineNumber: 0,
             required: false, 
             defaultValue: defaultValue,
             argName: null
@@ -114,6 +119,7 @@ public class ScriptArgumentTests
             position: 0, 
             type: type, 
             name: "example", 
+            lineNumber: 0,
             required: false, 
             defaultValue: "",
             argName: null
@@ -136,6 +142,7 @@ public class ScriptArgumentTests
             position: 0, 
             type: type, 
             name: "example", 
+            lineNumber: 0,
             required: false, 
             defaultValue: "null",
             argName: null
@@ -158,6 +165,7 @@ public class ScriptArgumentTests
             position: 0, 
             type: type, 
             name: "example", 
+            lineNumber: 0,
             required: false, 
             defaultValue: null,
             argName: null
@@ -180,6 +188,7 @@ public class ScriptArgumentTests
             position: 0, 
             type: type, 
             name: "name", 
+            lineNumber: 0,
             required: true, 
             defaultValue: null,
             argName: null

@@ -28,6 +28,11 @@ public class ScriptArgument
     /// The scripts parameter syntax.
     /// </summary>
     public ParameterSyntax Syntax { get; }
+    
+    /// <summary>
+    /// Number of the line the script-arg was defined at.
+    /// </summary>
+    public int LineNumber { get; }
 
     /// <summary>
     /// Initializes and validates syntax for a defined script argument.
@@ -43,11 +48,19 @@ public class ScriptArgument
     /// Thrown when the default argument is invalid for the given C# type.
     /// (e.g. the default string "hobbit" for an integer)  
     /// </exception>
-    public ScriptArgument(int position, string type, string name, bool required, string? defaultValue, string? argName)
+    public ScriptArgument(
+        int position, 
+        string type, 
+        string name, 
+        int lineNumber,
+        bool required, 
+        string? defaultValue, 
+        string? argName)
     {
         Position = position;
         ArgName = argName;
         Name = name;
+        LineNumber = lineNumber;
         Syntax = Build(type: type, name: name, required: required, defaultValue: defaultValue);
     }
 
