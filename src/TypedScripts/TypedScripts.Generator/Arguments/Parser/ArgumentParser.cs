@@ -12,8 +12,8 @@ public static class ArgumentParser
         // line start, optional indent, '#', optional space, '@param', then space(s)
         @"^\s*#\s*@param\s+" + 
         
-        // paramName, ':', paramType (spaces allowed around ':')
-        @"(?<paramName>\w+)\s*:\s*(?<paramType>\w+)" + 
+        // paramName (captured loosely so invalid identifiers are reported, not skipped), ':', paramType
+        @"(?<paramName>[^\s:]+)\s*:\s*(?<paramType>\w+)" +
         
         // optional: space(s) then the literal 'required' or 'optional'
         @"(?:\s+(?<modifier>required|optional))?" +
