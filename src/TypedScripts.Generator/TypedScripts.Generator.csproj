@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\TypedScripts.Common\TypedScripts.Common.csproj" PrivateAssets="All" />
+      <ProjectReference Include="..\TypedScripts.Common\TypedScripts.Common.csproj" PrivateAssets="All" />
     </ItemGroup>
 
 </Project>
