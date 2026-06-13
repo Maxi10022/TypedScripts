@@ -94,6 +94,11 @@ public static class ArgumentParser
             return ScriptArgumentParseResult.Failure(
                 lineNumber, ArgumentDiagnostics.UnsupportedArgumentDefault(ex));
         }
+        catch (Exception ex)
+        {
+            // TODO add fallback diagnostic for unexpected exceptions, prompt user to open an issue. 
+            throw new NotImplementedException();
+        }
         
         // Return constructed argument
         return ScriptArgumentParseResult.Success(arg);
