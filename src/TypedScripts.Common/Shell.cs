@@ -1,4 +1,5 @@
-﻿namespace TypedScripts.Common;
+﻿// ReSharper disable once CheckNamespace
+namespace TypedScripts;
 
 /// <summary>
 /// List of supported shells - extensible in the future.

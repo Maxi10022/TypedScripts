@@ -5,7 +5,6 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using TypedScripts.Arguments.Parser;
-using TypedScripts.Common;
 using TypedScripts.Scripts.Exceptions;
 
 namespace TypedScripts.Scripts.Parser;

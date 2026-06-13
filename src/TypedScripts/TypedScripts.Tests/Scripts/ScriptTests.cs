@@ -1,5 +1,4 @@
 using TypedScripts.Arguments;
-using TypedScripts.Common;
 using TypedScripts.Scripts;
 using TypedScripts.Scripts.Exceptions;
 using Xunit;
