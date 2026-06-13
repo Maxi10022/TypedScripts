@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using TypedScripts.Arguments.Parser;
-using TypedScripts.Core;
+using TypedScripts.Common;
 using TypedScripts.Scripts.Exceptions;
 
 namespace TypedScripts.Scripts.Parser;
@@ -96,7 +96,7 @@ public static class ScriptParser
         var fallbackName = Path.GetFileNameWithoutExtension(path);
         
         // TODO go through all text lines and look for a script-name definition to use
-        throw new NotImplementedException();
+        return fallbackName;
     }
 
     private static IEnumerable<Diagnostic> GetArgumentDiagnostics(

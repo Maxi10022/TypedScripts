@@ -1,4 +1,4 @@
-﻿namespace TypedScripts.Core;
+﻿namespace TypedScripts.Common;
 
 /// <summary>
 /// List of supported shells - extensible in the future.

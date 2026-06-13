@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TypedScripts.Arguments;
-using TypedScripts.Core;
+using TypedScripts.Common;
 using TypedScripts.Scripts.Exceptions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 

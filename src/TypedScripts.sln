@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Tests", "Typed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Core", "TypedScripts.Core\TypedScripts.Core.csproj", "{3AD97A87-6527-4BD7-837B-911163A193CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Common", "TypedScripts.Common\TypedScripts.Common.csproj", "{05ADF597-B873-423C-B99C-B4FADED5B2A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{3AD97A87-6527-4BD7-837B-911163A193CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3AD97A87-6527-4BD7-837B-911163A193CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3AD97A87-6527-4BD7-837B-911163A193CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05ADF597-B873-423C-B99C-B4FADED5B2A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05ADF597-B873-423C-B99C-B4FADED5B2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05ADF597-B873-423C-B99C-B4FADED5B2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05ADF597-B873-423C-B99C-B4FADED5B2A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
