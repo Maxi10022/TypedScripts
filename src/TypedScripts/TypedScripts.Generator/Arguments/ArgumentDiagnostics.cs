@@ -26,7 +26,7 @@ public static class ArgumentDiagnostics
     );
     
     public static DiagnosticDescriptor InvalidParameterIdentifier(InvalidParameterIdentifierException ex) => new(
-        id: "TSARG002",
+        id: "TSARG003",
         title: "Invalid parameter identifier",
         messageFormat: ex.Message,
         category: "TypedScripts", 
