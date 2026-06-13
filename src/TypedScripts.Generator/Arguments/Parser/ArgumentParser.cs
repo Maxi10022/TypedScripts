@@ -28,7 +28,6 @@ public static class ArgumentParser
         @"\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
     
-    // TODO Pass down file reference, which in turn gets passed down to diagnostics to make them helpful 
     public static IEnumerable<ScriptArgumentParseResult> ParseArguments(SourceText text)
     {
         var index = 0;
@@ -49,8 +48,6 @@ public static class ArgumentParser
 
     private static ScriptArgumentParseResult ParseSingleArgument(Match match, int index, int lineNumber)
     {
-        ScriptArgument arg;
-
         try
         {
             // Extract argument options
@@ -63,7 +60,7 @@ public static class ArgumentParser
             var argName = argNameGroup.Success ? argNameGroup.Value : null;
             
             // Construct argument
-            arg = new ScriptArgument(
+            var arg = new ScriptArgument(
                 name: name,
                 type: type,
                 lineNumber: lineNumber,
@@ -72,6 +69,9 @@ public static class ArgumentParser
                 argName: argName,
                 position: index
             );
+            
+            // Return constructed argument
+            return ScriptArgumentParseResult.Success(arg);
         }
         // Handle argument construction issues
         catch (InvalidArgumentDefaultException ex)
@@ -99,8 +99,5 @@ public static class ArgumentParser
             // TODO add fallback diagnostic for unexpected exceptions, prompt user to open an issue. 
             throw new NotImplementedException();
         }
-        
-        // Return constructed argument
-        return ScriptArgumentParseResult.Success(arg);
     }
 }

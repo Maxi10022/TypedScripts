@@ -5,8 +5,6 @@ namespace TypedScripts.Arguments;
 
 public static class ArgumentDiagnostics
 {
-    // TODO pass down file reference and incorporate into diagnostic to make this error speaking 
-    
     public static DiagnosticDescriptor UnsupportedArgumentType(UnsupportedArgumentTypeException ex) => new(
         id: "TSARG001",
         title: "Unsupported argument type",
