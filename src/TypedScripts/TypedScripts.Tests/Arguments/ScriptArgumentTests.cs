@@ -44,19 +44,26 @@ public class ScriptArgumentTests
         });
     }
 
-    [Fact]
-    public void Given_Invalid_CSharp_Identifier_Name_Throws()
+    [Theory]
+    [InlineData("species-type")]
+    [InlineData("example-name")]
+    [InlineData("0-retention")]
+    [InlineData("1stPlace")]
+    [InlineData("has space")]
+    [InlineData("with.dot")]
+    [InlineData("")]
+    public void Given_Invalid_CSharp_Identifier_Name_Throws(string name)
     {
         // Arrange & Act & Assert
         Assert.Throws<InvalidParameterIdentifierException>(() =>
         {
-            var x = new ScriptArgument(
+            _ = new ScriptArgument(
                 position: 0,
                 type: "string",
-                name: "species-type",
+                name: name,
                 lineNumber: 0,
                 required: false,
-                defaultValue: "dwarf",
+                defaultValue: null,
                 argName: null
             );
         });

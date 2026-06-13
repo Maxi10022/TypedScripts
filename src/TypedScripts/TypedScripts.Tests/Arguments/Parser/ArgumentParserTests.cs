@@ -364,6 +364,30 @@ public class ArgumentParserTests
         Assert.Equal("TSARG002", result.Problems[0].Id);
     }
 
+    [Theory]
+    [InlineData("example-name")]
+    [InlineData("0-retention")]
+    [InlineData("with.dot")]
+    [InlineData("1stPlace")]
+    public void ParseArguments_With_Invalid_CSharp_Identifier_Reports_Failure(string name)
+    {
+        // Arrange
+        var text = SourceText.From($"# @param {name}:string required");
+
+        // Act
+        var results = ArgumentParser
+            .ParseArguments(text)
+            .ToArray();
+
+        // Assert
+        Assert.Single(results);
+
+        var result = results[0];
+        Assert.True(result.IsFailure);
+        Assert.Null(result.Argument);
+        Assert.Equal("Invalid parameter identifier", result.Problems[0].Title.ToString());
+    }
+
     [Fact]
     public void ParseArguments_With_Failed_Argument_Does_Not_Consume_A_Position()
     {
