@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace TypedScripts.Runtime;
 
+// TODO consider omitting the *.Runtime namespace suffix for simplicity for consumers and codegen alike.
+
 // TODO come up with the rest of the infrastructure side of shell running things
 // This includes some base implementations for CMD, PowerShell, bash, sh, zsh and SSH.
 // Maybe reconsider current implementation, a bash script could be executable on SSH just like locally via bash!
