@@ -3,6 +3,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TypedScripts.Arguments.Exceptions;
+using TypedScripts.Arguments.ValueTypes;
+using TypedScripts.Common;
+using TypedScripts.Common.Exceptions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
 namespace TypedScripts.Arguments;
@@ -10,124 +13,108 @@ namespace TypedScripts.Arguments;
 public class ScriptArgument
 {
     /// <summary>
-    /// Position of this argument
-    /// </summary>
-    public int Position { get; } 
-    
-    /// <summary>
-    /// Name of the CLI argument if defined as named argument.
+    /// The optional CLI named-argument.
     /// </summary>
     public string? ArgName { get; }
     
     /// <summary>
-    /// Argument name used in C#.
+    /// The C# identifier for this argument.
     /// </summary>
-    public string Name { get; }
+    public SafeIdentifier Identifier { get; }
     
     /// <summary>
-    /// The scripts parameter syntax.
+    /// The C# argument type.
+    /// </summary>
+    public SupportedArgumentType Type { get; }
+    
+    /// <summary>
+    /// The actual parameter syntax. (e.g. <c>string? animal = "cat"</c>)
     /// </summary>
     public ParameterSyntax Syntax { get; }
     
-    /// <summary>
-    /// Number of the line the script-arg was defined at.
-    /// </summary>
-    public int LineNumber { get; }
-
-    /// <summary>
-    /// Initializes and validates syntax for a defined script argument.
-    /// </summary>
-    /// <returns>Complete <see cref="ParameterSyntax"/></returns>
-    /// <exception cref="UnsupportedArgumentTypeException">
-    /// Thrown if the C# argument-type is not supported.
-    /// </exception>
-    /// <exception cref="UnsupportedArgumentDefaultException">
-    /// Thrown if the arguments default value is not supported.
-    /// </exception>
-    /// <exception cref="InvalidArgumentDefaultException">
-    /// Thrown when the default argument is invalid for the given C# type.
-    /// (e.g. the default string "hobbit" for an integer)  
-    /// </exception>
-    public ScriptArgument(
-        int position, 
-        string type, 
-        string name, 
-        int lineNumber,
-        bool required, 
-        string? defaultValue, 
-        string? argName)
+    private ScriptArgument(
+        SafeIdentifier identifier, SupportedArgumentType type, ParameterSyntax syntax, string? argName)
     {
-        Position = position;
         ArgName = argName;
-        Name = name;
-        LineNumber = lineNumber;
-        Syntax = Build(type: type, name: name, required: required, defaultValue: defaultValue);
+        Identifier = identifier;
+        Syntax = syntax;
+        Type = type;
     }
 
-    private static ParameterSyntax Build(string type, string name, bool required, string? defaultValue)
+    /// <summary>
+    /// Factory method to create new <see cref="ScriptArgument"/> instances.
+    /// </summary>
+    /// <exception cref="InvalidIdentifierException">Thrown if the identifier is invalid.</exception>
+    /// <exception cref="UnsupportedArgumentTypeException">Thrown if the arguments type is unsupported.</exception>
+    /// <exception cref="UnsupportedArgumentDefaultException">Thrown if the default value is not supported.</exception>
+    public static ScriptArgument Create(ScriptArgumentOptions options)
     {
-        if (!SupportedArgumentTypes.IsSupportedArgumentType(type))
-        {
-            throw new UnsupportedArgumentTypeException(type);
-        }
+        var identifier = new SafeIdentifier(options.Identifier);
+        var type = new SupportedArgumentType(options.Type);
+        var syntax = BuildSyntax(identifier, type, options.Required, options.DefaultValue);
+        return new ScriptArgument(identifier, type, syntax, options.ArgName);
+    }
 
-        if (!SyntaxFacts.IsValidIdentifier(name))
-        {
-            throw new InvalidParameterIdentifierException(name);
-        }
+    private static ParameterSyntax BuildSyntax(
+        SafeIdentifier identifier, SupportedArgumentType type, bool required, string? defaultValue)
+    {
+        var syntaxType = GetTypeSyntax(type: type.Value, required: required);
         
-        var syntaxType = GetTypeSyntax(type: type, required: required);
-        
-        var parameter = Parameter(Identifier(name))
+        var parameter = Parameter(Identifier(identifier.Value))
             .WithType(syntaxType);
 
-        return (defaultValue is not null 
-            ? parameter.WithDefault(
-                EqualsValueClause(GetDefaultLiteralExpression(type: type, defaultValue: defaultValue))) 
-            : parameter).NormalizeWhitespace(); // Normalize white-spaces for both
+        if (defaultValue is null) return parameter.NormalizeWhitespace();
+
+        var defaultValueExpression =
+            EqualsValueClause(GetDefaultLiteralExpression(type: type.Value, defaultValue: defaultValue));
+        
+        return parameter
+            .WithDefault(defaultValueExpression)
+            .NormalizeWhitespace();
     }
     
+    /// <summary>
+    /// Returns the valid C# argument representation for this instance.
+    /// </summary>
     public override string ToString() => Syntax.ToFullString();
     
-    private static TypeSyntax GetTypeSyntax(string type, bool required) =>
-        required 
-            ? ParseTypeName(type) 
-            : NullableType(ParseTypeName(type));
+    private static TypeSyntax GetTypeSyntax(string type, bool required) => required 
+        ? ParseTypeName(type) 
+        : NullableType(ParseTypeName(type));
 
     private static LiteralExpressionSyntax GetDefaultLiteralExpression(string type, string defaultValue)
     {
-        // Handle default value set to null.
+        // Handle default value set to "null".
         if (string.IsNullOrWhiteSpace(defaultValue) || defaultValue!.Equals("null", StringComparison.OrdinalIgnoreCase))
         {
             return LiteralExpression(SyntaxKind.NullLiteralExpression);
         }
         
-        // defaultValue is not null since we call this method only in a protected branch!
         try
         {
-            return GetFormattedType(type) switch
+            return type switch
             {
-                "string" => LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(defaultValue!)),
-                "char" => LiteralExpression(SyntaxKind.CharacterLiteralExpression, Literal(char.Parse(defaultValue!))),
-                "bool" => defaultValue!.Equals("true", StringComparison.OrdinalIgnoreCase) 
+                "string" => LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(defaultValue)),
+                "char" => LiteralExpression(SyntaxKind.CharacterLiteralExpression, Literal(char.Parse(defaultValue))),
+                "sbyte" => Num(Literal(sbyte.Parse(defaultValue))),
+                "short" => Num(Literal(short.Parse(defaultValue))),
+                "ushort" => Num(Literal(ushort.Parse(defaultValue))),
+                "int" => Num(Literal(int.Parse(defaultValue))),
+                "uint" => Num(Literal(uint.Parse(defaultValue))),
+                "long" => Num(Literal(long.Parse(defaultValue))),
+                "ulong" => Num(Literal(ulong.Parse(defaultValue))),
+                "float" => Num(Literal(float.Parse(defaultValue))),
+                "double" => Num(Literal(double.Parse(defaultValue))),
+                "decimal" => Num(Literal(decimal.Parse(defaultValue))),
+                "bool" => defaultValue.Equals("true", StringComparison.OrdinalIgnoreCase) 
                     ? LiteralExpression(SyntaxKind.TrueLiteralExpression) 
                     : LiteralExpression(SyntaxKind.FalseLiteralExpression),
-                "sbyte" => Num(Literal(sbyte.Parse(defaultValue!))),
-                "short" => Num(Literal(short.Parse(defaultValue!))),
-                "ushort" => Num(Literal(ushort.Parse(defaultValue!))),
-                "int" => Num(Literal(int.Parse(defaultValue!))),
-                "uint" => Num(Literal(uint.Parse(defaultValue!))),
-                "long" => Num(Literal(long.Parse(defaultValue!))),
-                "ulong" => Num(Literal(ulong.Parse(defaultValue!))),
-                "float" => Num(Literal(float.Parse(defaultValue!))),
-                "double" => Num(Literal(double.Parse(defaultValue!))),
-                "decimal" => Num(Literal(decimal.Parse(defaultValue!))),
                 
-                // Should never be hit, just here for completeness
+                // Should never be hit, but acts as a safety net
                 _ => throw new UnsupportedArgumentDefaultException(type)
             };
         }
-        catch 
+        catch (Exception ex) when (ex is not UnsupportedArgumentDefaultException)
         {
             throw new InvalidArgumentDefaultException(defaultValue, type);
         }
@@ -135,6 +122,4 @@ public class ScriptArgument
         static LiteralExpressionSyntax Num(SyntaxToken token) =>
             LiteralExpression(SyntaxKind.NumericLiteralExpression, token);
     }
-
-    private static string GetFormattedType(string type) => type.ToLower();
 }

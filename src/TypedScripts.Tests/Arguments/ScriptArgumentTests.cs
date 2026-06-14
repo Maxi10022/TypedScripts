@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using TypedScripts.Arguments;
 using TypedScripts.Arguments.Exceptions;
+using TypedScripts.Arguments.ValueTypes;
+using TypedScripts.Common.Exceptions;
 using Xunit;
 
 namespace TypedScripts.Tests.Arguments;
@@ -13,35 +15,15 @@ public class ScriptArgumentTests
     {
         // Arrange & Act & Assert
         Assert.Throws<UnsupportedArgumentTypeException>(() =>
-        {
-            _ = new ScriptArgument(
-                position: 0,
-                type: "hobbits",
-                name: "species",
-                lineNumber: 0,
-                required: false,
-                defaultValue: null,
-                argName: null
-            );
-        });
+            Argument(type: "hobbits", identifier: "species"));
     }
-    
+
     [Fact]
     public void Using_Invalid_Default_Value_Throws()
     {
         // Arrange & Act & Assert
         Assert.Throws<InvalidArgumentDefaultException>(() =>
-        {
-            _ = new ScriptArgument(
-                position: 0,
-                type: "int",
-                name: "species",
-                lineNumber: 0,
-                required: false,
-                defaultValue: "gandalf",
-                argName: null
-            );
-        });
+            Argument(type: "int", identifier: "species", defaultValue: "gandalf"));
     }
 
     [Theory]
@@ -52,37 +34,19 @@ public class ScriptArgumentTests
     [InlineData("has space")]
     [InlineData("with.dot")]
     [InlineData("")]
-    public void Given_Invalid_CSharp_Identifier_Name_Throws(string name)
+    public void Given_Invalid_CSharp_Identifier_Throws(string identifier)
     {
         // Arrange & Act & Assert
-        Assert.Throws<InvalidParameterIdentifierException>(() =>
-        {
-            _ = new ScriptArgument(
-                position: 0,
-                type: "string",
-                name: name,
-                lineNumber: 0,
-                required: false,
-                defaultValue: null,
-                argName: null
-            );
-        });
+        Assert.Throws<InvalidIdentifierException>(() =>
+            Argument(type: "string", identifier: identifier));
     }
-    
+
     [Theory]
     [MemberData(nameof(SupportedArgumentTypesWithDefaultValue))]
     public void Required_ScriptArgument_With_Default_Value_Compiles(string type, string defaultValue)
     {
         // Arrange
-        var arg = new ScriptArgument(
-            position: 0, 
-            type: type,
-            name: "myParameter", 
-            lineNumber: 0,
-            required: true, 
-            defaultValue: defaultValue,
-            argName: null
-        );
+        var arg = Argument(type: type, identifier: "myParameter", required: true, defaultValue: defaultValue);
 
         // Act
         var syntax = arg.ToString();
@@ -92,21 +56,13 @@ public class ScriptArgumentTests
         var expected = $"{type} myParameter = {formattedDefault}";
         Assert.Equal(expected, syntax);
     }
-    
+
     [Theory]
     [MemberData(nameof(SupportedArgumentTypesWithDefaultValue))]
     public void Optional_ScriptArgument_With_Default_Value_Compiles(string type, string defaultValue)
     {
         // Arrange
-        var arg = new ScriptArgument(
-            position: 0, 
-            type: type,
-            name: "myParameter", 
-            lineNumber: 0,
-            required: false, 
-            defaultValue: defaultValue,
-            argName: null
-        );
+        var arg = Argument(type: type, identifier: "myParameter", required: false, defaultValue: defaultValue);
 
         // Act
         var syntax = arg.ToString();
@@ -116,21 +72,13 @@ public class ScriptArgumentTests
         var expected = $"{type}? myParameter = {formattedDefault}";
         Assert.Equal(expected, syntax);
     }
-    
+
     [Theory]
     [ClassData(typeof(SupportedArgumentTypes))]
     public void Optional_ScriptArgument_With_Explicit_Empty_Default_Compiles(string type)
     {
         // Arrange
-        var arg = new ScriptArgument(
-            position: 0, 
-            type: type, 
-            name: "example", 
-            lineNumber: 0,
-            required: false, 
-            defaultValue: "",
-            argName: null
-        );
+        var arg = Argument(type: type, identifier: "example", required: false, defaultValue: "");
 
         // Act
         var syntax = arg.ToString();
@@ -139,21 +87,13 @@ public class ScriptArgumentTests
         var expected = $"{type}? example = null"; // e.g. string? example
         Assert.Equal(expected, syntax);
     }
-    
+
     [Theory]
     [ClassData(typeof(SupportedArgumentTypes))]
     public void Optional_ScriptArgument_With_Explicit_NULL_Default_Compiles(string type)
     {
         // Arrange
-        var arg = new ScriptArgument(
-            position: 0, 
-            type: type, 
-            name: "example", 
-            lineNumber: 0,
-            required: false, 
-            defaultValue: "null",
-            argName: null
-        );
+        var arg = Argument(type: type, identifier: "example", required: false, defaultValue: "null");
 
         // Act
         var syntax = arg.ToString();
@@ -162,21 +102,13 @@ public class ScriptArgumentTests
         var expected = $"{type}? example = null"; // e.g. string? example
         Assert.Equal(expected, syntax);
     }
-    
+
     [Theory]
     [ClassData(typeof(SupportedArgumentTypes))]
     public void Optional_ScriptArgument_Compiles(string type)
     {
         // Arrange
-        var arg = new ScriptArgument(
-            position: 0, 
-            type: type, 
-            name: "example", 
-            lineNumber: 0,
-            required: false, 
-            defaultValue: null,
-            argName: null
-        );
+        var arg = Argument(type: type, identifier: "example", required: false, defaultValue: null);
 
         // Act
         var syntax = arg.ToString();
@@ -185,21 +117,13 @@ public class ScriptArgumentTests
         var expected = $"{type}? example"; // e.g. string? example
         Assert.Equal(expected, syntax);
     }
-    
+
     [Theory]
     [ClassData(typeof(SupportedArgumentTypes))]
     public void Required_ScriptArgument_Compiles(string type)
     {
         // Arrange
-        var arg = new ScriptArgument(
-            position: 0, 
-            type: type, 
-            name: "name", 
-            lineNumber: 0,
-            required: true, 
-            defaultValue: null,
-            argName: null
-        );
+        var arg = Argument(type: type, identifier: "name", required: true, defaultValue: null);
 
         // Act
         var syntax = arg.ToString();
@@ -209,10 +133,24 @@ public class ScriptArgumentTests
         Assert.Equal(expected, syntax);
     }
 
-    // Test data setup 
+    private static ScriptArgument Argument(
+        string? type = "string",
+        string? identifier = "example",
+        bool required = false,
+        string? defaultValue = null,
+        string? argName = null) =>
+        ScriptArgument.Create(new ScriptArgumentOptions
+        {
+            Type = type,
+            Identifier = identifier,
+            Required = required,
+            DefaultValue = defaultValue,
+            ArgName = argName,
+        });
+
     public static IEnumerable<object[]> SupportedArgumentTypesWithDefaultValue()
     {
-        foreach (var type in TypedScripts.Arguments.SupportedArgumentTypes.All)
+        foreach (var type in SupportedArgumentType.All)
         {
             yield return [type, GetDefaultValue(type)];
         }
