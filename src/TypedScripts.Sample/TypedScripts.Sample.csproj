@@ -7,16 +7,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TypedScripts.Generator\TypedScripts.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <None Remove="DDD.UbiquitousLanguageRegistry.txt"/>
         <AdditionalFiles Include="DDD.UbiquitousLanguageRegistry.txt"/>
+        <None Remove="backupDatabase.sh" />
+        <AdditionalFiles Include="backupDatabase.sh" />
     </ItemGroup>
 
     <ItemGroup>
         <None Remove="backup-database.sh"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="TypedScripts.Runtime" Version="1.0.0-alpha" />
     </ItemGroup>
 
 </Project>
