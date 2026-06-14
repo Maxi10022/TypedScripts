@@ -40,4 +40,13 @@ public static class ArgumentDiagnostics
         DiagnosticSeverity.Error,
         isEnabledByDefault: true
     );
+    
+    public static DiagnosticDescriptor UnknownArgumentValidationError(string message) => new(
+        id: "TSARG005",
+        title: "Unknown problem during argument validation",
+        messageFormat: message, 
+        category: "TypedScripts",
+        DiagnosticSeverity.Error,
+        isEnabledByDefault: true
+    );
 }

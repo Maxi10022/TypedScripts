@@ -96,8 +96,11 @@ public static class ArgumentParser
         }
         catch (Exception ex)
         {
-            // TODO add fallback diagnostic for unexpected exceptions, prompt user to open an issue. 
-            throw new NotImplementedException();
+            var message = $"An unexpected exception occured while validating argument at line {lineNumber}." 
+                          + $"Problem: {ex}";
+            
+            return ScriptArgumentParseResult.Failure(
+                lineNumber, ArgumentDiagnostics.UnknownArgumentValidationError(message));
         }
     }
 }
