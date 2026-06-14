@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using TypedScripts.Arguments.ValueTypes;
 
-namespace TypedScripts.Tests.Arguments;
+namespace TypedScripts.Tests.Utils;
 
 public class SupportedArgumentTypes : IEnumerable<object[]>
 {
