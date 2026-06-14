@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TypedScripts.Arguments.ValueTypes;
 
 namespace TypedScripts.Tests.Arguments;
 
@@ -7,7 +8,7 @@ public class SupportedArgumentTypes : IEnumerable<object[]>
 {
     public IEnumerator<object[]> GetEnumerator()
     {
-        foreach (var type in TypedScripts.Arguments.SupportedArgumentTypes.All)
+        foreach (var type in SupportedArgumentType.All)
         {
             yield return [type];
         }
