@@ -2,7 +2,7 @@
 using TypedScripts.Arguments.Exceptions;
 using TypedScripts.Common.Exceptions;
 
-namespace TypedScripts.Arguments;
+namespace TypedScripts.Arguments.Parser;
 
 public static class ArgumentDiagnostics
 {
