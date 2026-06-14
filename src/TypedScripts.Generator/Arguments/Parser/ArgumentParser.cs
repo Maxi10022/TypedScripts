@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Microsoft.CodeAnalysis.Text;
 using TypedScripts.Arguments.Exceptions;
+using TypedScripts.Common.Exceptions;
+using TypedScripts.Common.Parser;
 
 namespace TypedScripts.Arguments.Parser;
 
-public static class ArgumentParser
+public class ArgumentParser : ILineParser
 {
     private static readonly Regex ParamPattern = new(
         // line start, optional indent, '#', optional space, '@param', then space(s)
@@ -28,79 +28,66 @@ public static class ArgumentParser
         @"\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
     
-    public static IEnumerable<ScriptArgumentParseResult> ParseArguments(SourceText text)
+    public ILineParseResult Parse(string line)
     {
-        var index = 0;
-        
-        foreach (var textLine in text.Lines)
-        {
-            var content = textLine.ToString();
-            
-            var match = ParamPattern.Match(content);
-            if (!match.Success) continue;
-            
-            var result = ParseSingleArgument(match, index: index, lineNumber: textLine.LineNumber);
-            if (result.IsSuccess) index++;
-            
-            yield return result;
-        }
+        var match = ParamPattern.Match(line);
+        if (!match.Success) return ParseResults.Skip();
+        var options = ExtractOptions(match);
+        return TryCreateArgument(options);
     }
 
-    private static ScriptArgumentParseResult ParseSingleArgument(Match match, int index, int lineNumber)
+    private ScriptArgumentOptions ExtractOptions(Match match)
+    {
+        var defaultGroup = match.Groups["default"];
+        var argNameGroup = match.Groups["argName"];
+        
+        return new ScriptArgumentOptions
+        {
+            Identifier = match.Groups["paramName"].Value,
+            Type = match.Groups["paramType"].Value,
+            Required = match.Groups["modifier"].Value.Equals("required", StringComparison.OrdinalIgnoreCase),
+            DefaultValue = defaultGroup.Success ? defaultGroup.Value : null,
+            ArgName = argNameGroup.Success ? argNameGroup.Value : null,
+        };
+        
+    }
+
+    private ILineParseResult TryCreateArgument(ScriptArgumentOptions options)
     {
         try
         {
-            // Extract argument options
-            var name = match.Groups["paramName"].Value;
-            var type = match.Groups["paramType"].Value;
-            var required = match.Groups["modifier"].Value.Equals("required", StringComparison.OrdinalIgnoreCase);
-            var defaultGroup = match.Groups["default"];
-            var defaultValue = defaultGroup.Success ? defaultGroup.Value : null;
-            var argNameGroup = match.Groups["argName"];
-            var argName = argNameGroup.Success ? argNameGroup.Value : null;
-            
-            // Construct argument
-            var arg = new ScriptArgument(
-                name: name,
-                type: type,
-                lineNumber: lineNumber,
-                required: required,
-                defaultValue: defaultValue,
-                argName: argName,
-                position: index
-            );
-            
-            // Return constructed argument
-            return ScriptArgumentParseResult.Success(arg);
+            var script = ScriptArgument.Create(options);
+            return ParseResults.Success(script);
         }
         // Handle argument construction issues
         catch (InvalidArgumentDefaultException ex)
         {
-            return ScriptArgumentParseResult.Failure(
-                lineNumber, ArgumentDiagnostics.InvalidArgumentDefault(ex));
+            return ParseResults.Failure(
+                ArgumentDiagnostics.InvalidArgumentDefault(ex));
         }
         catch (UnsupportedArgumentTypeException ex)
         {
-            return ScriptArgumentParseResult.Failure(
-                lineNumber, ArgumentDiagnostics.UnsupportedArgumentType(ex));
+            return ParseResults.Failure(
+                ArgumentDiagnostics.UnsupportedArgumentType(ex));
         }
-        catch (InvalidParameterIdentifierException ex)
+        catch (InvalidIdentifierException ex)
         {
-            return ScriptArgumentParseResult.Failure(
-                lineNumber, ArgumentDiagnostics.InvalidParameterIdentifier(ex));
+            return ParseResults.Failure(
+                ArgumentDiagnostics.InvalidParameterIdentifier(ex));
         }
         catch (UnsupportedArgumentDefaultException ex)
         {
-            return ScriptArgumentParseResult.Failure(
-                lineNumber, ArgumentDiagnostics.UnsupportedArgumentDefault(ex));
+            return ParseResults.Failure(
+                ArgumentDiagnostics.UnsupportedArgumentDefault(ex));
         }
         catch (Exception ex)
         {
-            var message = $"An unexpected exception occured while validating argument at line {lineNumber}." 
-                          + $"Problem: {ex}";
-            
-            return ScriptArgumentParseResult.Failure(
-                lineNumber, ArgumentDiagnostics.UnknownArgumentValidationError(message));
+            return ParseResults.Failure(
+                ArgumentDiagnostics.UnknownArgumentValidationError(BuildUnknownErrorMessage(ex)));
         }
     }
+
+    private string BuildUnknownErrorMessage(Exception ex) =>
+        $"An unexpected exception occured while validating argument."
+        + $"Problem: {ex}";
 }

@@ -1,367 +1,162 @@
-using Microsoft.CodeAnalysis.Text;
-using System.Linq;
+using TypedScripts.Arguments;
 using TypedScripts.Arguments.Parser;
+using TypedScripts.Common.Parser;
 using Xunit;
 
 namespace TypedScripts.Tests.Arguments.Parser;
 
 public class ArgumentParserTests
 {
-    [Fact]
-    public void ParseArguments_From_File_With_Single_Valid_Argument_Succeeds()
-    {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param count:int required
-                                   """);
+    private static ILineParseResult Parse(string line) => new ArgumentParser().Parse(line);
 
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+    private static ScriptArgument ParseArgument(string line) =>
+        Assert.IsType<LineParseSuccess<ScriptArgument>>(Parse(line)).Value;
+
+    private static LineParseFailure ParseFailure(string line) =>
+        Assert.IsType<LineParseFailure>(Parse(line));
+
+    [Fact]
+    public void Parse_Required_Argument_Produces_Non_Nullable_Parameter()
+    {
+        // Arrange & Act
+        var arg = ParseArgument("# @param count:int required");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
-        Assert.Equal(0, arg.Position);
         Assert.Equal("int count", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Optional_Modifier_Produces_Nullable_Parameter()
+    public void Parse_Optional_Argument_Produces_Nullable_Parameter()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param verbose:bool optional
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param verbose:bool optional");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
-        Assert.Equal(0, arg.Position);
         Assert.Equal("bool? verbose", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Omitted_Modifier_Defaults_To_Optional()
+    public void Parse_With_Omitted_Modifier_Defaults_To_Optional()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param outputFile:string
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param outputFile:string");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
-        Assert.Equal(0, arg.Position);
         Assert.Equal("string? outputFile", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Unquoted_Default_Value_Is_Applied()
+    public void Parse_Applies_Unquoted_Default_Value()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param port:int optional default=5432
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param port:int optional default=5432");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
         Assert.Equal("int? port = 5432", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Boolean_Default_Value_Is_Applied()
+    public void Parse_Applies_Boolean_Default_Value()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param compress:bool optional default=true
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param compress:bool optional default=true");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
         Assert.Equal("bool? compress = true", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Quoted_Default_Value_Strips_Surrounding_Quotes()
+    public void Parse_Strips_Surrounding_Quotes_From_Default_Value()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param outputDir:string optional default="/var/backups"
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param outputDir:string optional default=\"/var/backups\"");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
         Assert.Equal("string? outputDir = \"/var/backups\"", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Quoted_Default_Value_Containing_Whitespace_Is_Applied()
+    public void Parse_Preserves_Whitespace_In_Quoted_Default_Value()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param message:string optional default="hello world"
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param message:string optional default=\"hello world\"");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
         Assert.Equal("string? message = \"hello world\"", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Named_Argument_Sets_ArgName()
+    public void Parse_Sets_ArgName_For_Named_Argument()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param environment:string required argName=env
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param environment:string required argName=env");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
         Assert.Equal("env", arg.ArgName);
         Assert.Equal("string environment", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Kebab_Case_Named_Argument_Sets_ArgName()
+    public void Parse_Sets_Kebab_Case_ArgName()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param dryRun:bool optional default=false argName=dry-run
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param dryRun:bool optional default=false argName=dry-run");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
         Assert.Equal("dry-run", arg.ArgName);
         Assert.Equal("bool? dryRun = false", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_With_Modifier_Default_And_Named_Argument_Succeeds()
+    public void Parse_With_Modifier_Default_And_Named_Argument_Succeeds()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param retries:int optional default=3 argName=retries
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var arg = ParseArgument("# @param retries:int optional default=3 argName=retries");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-        Assert.Empty(result.Problems);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
-        Assert.Equal(0, arg.Position);
         Assert.Equal("retries", arg.ArgName);
         Assert.Equal("int? retries = 3", arg.ToString());
     }
 
     [Fact]
-    public void ParseArguments_From_File_With_Multiple_Arguments_Assigns_Positions_In_Declaration_Order()
+    public void Parse_Skips_Line_That_Is_Not_A_Param_Definition()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param first:string required
-                                   # @param second:int required
-                                   # @param third:bool required
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
-
-        // Assert
-        Assert.Equal(3, results.Length);
-        Assert.All(results, result => Assert.True(result.IsSuccess));
-
-        Assert.Equal(0, results[0].Argument!.Position);
-        Assert.Equal("string first", results[0].Argument!.ToString());
-
-        Assert.Equal(1, results[1].Argument!.Position);
-        Assert.Equal("int second", results[1].Argument!.ToString());
-
-        Assert.Equal(2, results[2].Argument!.Position);
-        Assert.Equal("bool third", results[2].Argument!.ToString());
+        // Arrange & Act & Assert
+        Assert.IsType<SkipLineParseResult>(Parse("echo hello"));
     }
 
     [Fact]
-    public void ParseArguments_Ignores_Blank_Lines_Between_Definitions()
+    public void Parse_Skips_Plain_Comment_Line()
     {
-        // Arrange
-        var text = SourceText.From("""
-
-                                   # @param name:string required
-
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
-
-        // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsSuccess);
-
-        var arg = result.Argument;
-        Assert.NotNull(arg);
-        Assert.Equal(0, arg.Position);
-        Assert.Equal("string name", arg.ToString());
+        // Arrange & Act & Assert
+        Assert.IsType<SkipLineParseResult>(Parse("# just a normal comment"));
     }
 
     [Fact]
-    public void ParseArguments_With_Unsupported_Type_Reports_Failure()
+    public void Parse_Skips_Blank_Line()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param species:hobbit required
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
-
-        // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsFailure);
-        Assert.Null(result.Argument);
-        Assert.Equal("TSARG001", result.Problems[0].Id);
+        // Arrange & Act & Assert
+        Assert.IsType<SkipLineParseResult>(Parse(""));
     }
 
     [Fact]
-    public void ParseArguments_With_Invalid_Default_Value_Reports_Failure()
+    public void Parse_With_Unsupported_Type_Reports_Failure()
     {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param age:int optional default=gandalf
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var failure = ParseFailure("# @param species:hobbit required");
 
         // Assert
-        Assert.Single(results);
+        Assert.Equal("TSARG001", failure.Descriptors[0].Id);
+    }
 
-        var result = results[0];
-        Assert.True(result.IsFailure);
-        Assert.Null(result.Argument);
-        Assert.Equal("TSARG002", result.Problems[0].Id);
+    [Fact]
+    public void Parse_With_Invalid_Default_Value_Reports_Failure()
+    {
+        // Arrange & Act
+        var failure = ParseFailure("# @param age:int optional default=gandalf");
+
+        // Assert
+        Assert.Equal("TSARG002", failure.Descriptors[0].Id);
     }
 
     [Theory]
@@ -369,47 +164,12 @@ public class ArgumentParserTests
     [InlineData("0-retention")]
     [InlineData("with.dot")]
     [InlineData("1stPlace")]
-    public void ParseArguments_With_Invalid_CSharp_Identifier_Reports_Failure(string name)
+    public void Parse_With_Invalid_CSharp_Identifier_Reports_Failure(string identifier)
     {
-        // Arrange
-        var text = SourceText.From($"# @param {name}:string required");
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
+        // Arrange & Act
+        var failure = ParseFailure($"# @param {identifier}:string required");
 
         // Assert
-        Assert.Single(results);
-
-        var result = results[0];
-        Assert.True(result.IsFailure);
-        Assert.Null(result.Argument);
-        Assert.Equal("Invalid parameter identifier", result.Problems[0].Title.ToString());
-    }
-
-    [Fact]
-    public void ParseArguments_With_Failed_Argument_Does_Not_Consume_A_Position()
-    {
-        // Arrange
-        var text = SourceText.From("""
-                                   # @param broken:hobbit required
-                                   # @param valid:string required
-                                   """);
-
-        // Act
-        var results = ArgumentParser
-            .ParseArguments(text)
-            .ToArray();
-
-        // Assert
-        Assert.Equal(2, results.Length);
-
-        Assert.True(results[0].IsFailure);
-        Assert.Equal("TSARG001", results[0].Problems[0].Id);
-
-        Assert.True(results[1].IsSuccess);
-        Assert.Equal(0, results[1].Argument!.Position);
-        Assert.Equal("string valid", results[1].Argument!.ToString());
+        Assert.Equal("TSARG003", failure.Descriptors[0].Id);
     }
 }
