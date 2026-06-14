@@ -11,7 +11,7 @@ public static class ArgumentDiagnostics
         title: "Unsupported argument type",
         messageFormat: ex.Message,
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
     
@@ -20,7 +20,7 @@ public static class ArgumentDiagnostics
         title: "Invalid default value",
         messageFormat: ex.Message,
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
     
@@ -29,7 +29,7 @@ public static class ArgumentDiagnostics
         title: "Invalid parameter identifier",
         messageFormat: ex.Message,
         category: "TypedScripts", 
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
     
@@ -38,7 +38,7 @@ public static class ArgumentDiagnostics
         title: "Unsupported argument default",
         messageFormat: ex.Message,
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
     
@@ -47,7 +47,7 @@ public static class ArgumentDiagnostics
         title: "Unknown problem during argument validation",
         messageFormat: message, 
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
 }
