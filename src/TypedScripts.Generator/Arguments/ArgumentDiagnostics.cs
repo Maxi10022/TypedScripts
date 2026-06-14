@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using TypedScripts.Arguments.Exceptions;
+using TypedScripts.Common.Exceptions;
 
 namespace TypedScripts.Arguments;
 
@@ -23,7 +24,7 @@ public static class ArgumentDiagnostics
         isEnabledByDefault: true
     );
     
-    public static DiagnosticDescriptor InvalidParameterIdentifier(InvalidParameterIdentifierException ex) => new(
+    public static DiagnosticDescriptor InvalidParameterIdentifier(InvalidIdentifierException ex) => new(
         id: "TSARG003",
         title: "Invalid parameter identifier",
         messageFormat: ex.Message,
