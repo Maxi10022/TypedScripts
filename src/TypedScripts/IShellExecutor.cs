@@ -7,7 +7,14 @@ using System.Threading.Tasks;
 
 namespace TypedScripts;
 
-// TODO consider omitting the *.Runtime namespace suffix for simplicity for consumers and codegen alike.
+// Script -> Interpreter -> Execution Target
+// 1. Provide script in temporary file
+// 2. Use correct interpreter for script "execution" ("bash ./script.sh")
+// 3. Execute script on execution target (Local Bash, Local PowerShell, SSH Bash, WSL)
+// 4. Forward stdin, stdout, stderr streams
+// 5. Cleanup temporary script
+
+// Once these basics stand implement niceties on top of that - e.g. simple async input->output method calls. 
 
 // TODO come up with the rest of the infrastructure side of shell running things
 // This includes some base implementations for CMD, PowerShell, bash, sh, zsh and SSH.
