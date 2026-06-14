@@ -83,17 +83,14 @@ public class SafeIdentifierTests
     }
 
     [Fact]
-    public void ToString_Escapes_A_Reserved_Keyword_With_An_At_Sign()
+    public void Reserved_Keyword_Is_Escaped_With_An_At_Sign()
     {
-        // Arrange
+        // Arrange & Act
         var identifier = new SafeIdentifier("class");
 
-        // Act
-        var text = identifier.ToString();
-
         // Assert
-        Assert.Equal("class", identifier.Value);
-        Assert.Equal("@class", text);
+        Assert.Equal("@class", identifier.Value);
+        Assert.Equal("@class", identifier.ToString());
     }
 
     [Fact]

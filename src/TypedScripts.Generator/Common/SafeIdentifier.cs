@@ -1,24 +1,31 @@
 ﻿using System;
 using Microsoft.CodeAnalysis.CSharp;
 using TypedScripts.Common.Exceptions;
-using TypedScripts.Scripts.Exceptions;
 
 namespace TypedScripts.Common;
 
+/// <summary>
+/// Represents an identifier safe to use in source generated code.
+/// </summary>
+/// <param name="value">The identifiers string representation.</param>
+/// <exception cref="InvalidIdentifierException">Thrown if the identifier is invalid.</exception>
 public class SafeIdentifier(string? value) : IEquatable<SafeIdentifier>
 {
     public string Value { get; } =
         !SyntaxFacts.IsValidIdentifier(value)
             ? throw new InvalidIdentifierException(value ?? "null")
-            : value;
-
-    // Reserved keywords must be escaped properly
-    private readonly bool _isReservedKeyword = SyntaxFacts.GetKeywordKind(value) != SyntaxKind.None;
+            : EscapeIdentifier(value); // Escape identifier if it's a reserved keyword.
 
     public static implicit operator SafeIdentifier(string value) => new(value);
     
     // Correctly escapes reserved keyword names
-    public override string ToString() => _isReservedKeyword ? "@" + Value : Value;
+    public override string ToString() => Value;
+
+    private static string EscapeIdentifier(string identifier)
+    {
+        var isReservedKeyword = SyntaxFacts.GetKeywordKind(identifier) != SyntaxKind.None;
+        return isReservedKeyword ? "@" + identifier : identifier;
+    }
     
     public bool Equals(SafeIdentifier? other)
     {
