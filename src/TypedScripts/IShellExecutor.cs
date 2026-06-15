@@ -22,7 +22,7 @@ namespace TypedScripts;
 
 public interface IShellExecutor
 {
-    public Shell Handles { get; }
+    public Interpreter Handles { get; }
     
     public Task<IShellSession> StartAsync(ShellInvocation invocation, CancellationToken ct = default);
 }
@@ -36,7 +36,7 @@ public interface IShellExecutor
 /// </summary>
 public class ShellDispatcher
 {
-    private readonly IReadOnlyDictionary<Shell, IShellExecutor> _executors;
+    private readonly IReadOnlyDictionary<Interpreter, IShellExecutor> _executors;
 
     // Inject all available shell executors, currently does not handle duplicate shell handlers.
     public ShellDispatcher(IEnumerable<IShellExecutor> executors)
@@ -47,10 +47,10 @@ public class ShellDispatcher
     // If moved to codegen this method can be made internal, optional.
     public Task<IShellSession> StartAsync(ShellInvocation invocation, CancellationToken ct = default)
     {
-        return _executors.TryGetValue(invocation.Shell, out IShellExecutor executor)
+        return _executors.TryGetValue(invocation.Interpreter, out IShellExecutor executor)
             ? executor.StartAsync(invocation, ct)
             : throw new NotSupportedException(
-                $"Script execution with shell '{invocation.Shell.GetShellName()}' is not yet supported.");
+                $"Script execution with shell '{invocation.Interpreter.GetShellName()}' is not yet supported.");
     }
 }
 
@@ -69,9 +69,9 @@ public interface IShellSession : IDisposable
 /// Typically never user constructed, usually constructed by the code-generated script object. 
 /// </summary>
 /// <param name="script">The actual script content to execute.</param>
-/// <param name="shell"></param>
+/// <param name="interpreter"></param>
 /// <param name="arguments"></param>
-public class ShellInvocation(string script, Shell shell, IReadOnlyList<string> arguments)
+public class ShellInvocation(string script, Interpreter interpreter, IReadOnlyList<string> arguments)
 {
     /// <summary>
     /// The actual script to execute.
@@ -81,7 +81,7 @@ public class ShellInvocation(string script, Shell shell, IReadOnlyList<string> a
     /// <summary>
     /// The shell to use to execute that script.
     /// </summary>
-    public Shell Shell { get; } = shell;
+    public Interpreter Interpreter { get; } = interpreter;
     
     /// <summary>
     /// Ordered list of script arguments, order must be preserved.

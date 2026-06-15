@@ -29,14 +29,14 @@ public class Script
     /// <summary>
     /// The shell this script must be executed with. 
     /// </summary>
-    public Shell Shell { get; }
+    public Interpreter Interpreter { get; }
     
     /// <summary>
     /// The scripts generated syntax.
     /// </summary>
     public CompilationUnitSyntax Syntax { get; }
 
-    public Script(string name, string scriptContent, Shell shell, ScriptArgument[] arguments)
+    public Script(string name, string scriptContent, Interpreter interpreter, ScriptArgument[] arguments)
     {
         if (!SyntaxFacts.IsValidIdentifier(name))
         {
@@ -45,7 +45,7 @@ public class Script
         
         Arguments = arguments;
         Name = name;
-        Shell = shell;
+        Interpreter = interpreter;
         Syntax = Build(name: name, scriptContent: scriptContent, arguments: arguments);
     }
 

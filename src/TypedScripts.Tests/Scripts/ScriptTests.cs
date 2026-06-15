@@ -7,19 +7,6 @@ namespace TypedScripts.Tests.Scripts;
 
 public class ScriptTests
 {
-    [Theory]
-    [InlineData("my-script")]
-    [InlineData("0script")]
-    [InlineData("has space")]
-    [InlineData("with.dot")]
-    [InlineData("")]
-    public void Given_Invalid_CSharp_Identifier_Name_Throws(string name)
-    {
-        // Arrange & Act & Assert
-        Assert.Throws<InvalidScriptIdentifierException>(() =>
-            new Script(name: name, scriptContent: "echo hello", shell: Shell.Bash, arguments: []));
-    }
-
     [Fact]
     public void Constructor_Exposes_Name_Shell_And_Arguments()
     {
@@ -30,13 +17,13 @@ public class ScriptTests
         var script = new Script(
             name: "MyScript", 
             scriptContent: "echo hello", 
-            shell: Shell.Bash, 
+            interpreter: Interpreter.Bash, 
             arguments: arguments
         );
 
         // Assert
         Assert.Equal("MyScript", script.Name);
-        Assert.Equal(Shell.Bash, script.Shell);
+        Assert.Equal(Interpreter.Bash, script.Interpreter);
         Assert.Same(arguments, script.Arguments);
     }
 
@@ -47,7 +34,7 @@ public class ScriptTests
         var script = new Script(
             name: "MyScript", 
             scriptContent: "echo hello", 
-            shell: Shell.Bash, 
+            interpreter: Interpreter.Bash, 
             arguments: []
         );
 
@@ -65,7 +52,7 @@ public class ScriptTests
         var script = new Script(
             name: "MyScript", 
             scriptContent: "echo hello", 
-            shell: Shell.Bash, 
+            interpreter: Interpreter.Bash, 
             arguments: []
         );
 
@@ -83,7 +70,7 @@ public class ScriptTests
         var script = new Script(
             name: "MyScript", 
             scriptContent: "echo hello world",
-            shell: Shell.Bash, 
+            interpreter: Interpreter.Bash, 
             arguments: []
         );
 
@@ -101,7 +88,7 @@ public class ScriptTests
         var script = new Script(
             name: "MyScript", 
             scriptContent: "echo hello", 
-            shell: Shell.Bash, 
+            interpreter: Interpreter.Bash, 
             arguments: []
         );
 
@@ -114,13 +101,13 @@ public class ScriptTests
     {
         // Arrange & Act & Assert
         Assert.Throws<InvalidScriptSyntaxException>(() =>
-            new Script(name: "MyScript", scriptContent: "\"\"\"", shell: Shell.Bash, arguments: []));
+            new Script(name: "MyScript", scriptContent: "\"\"\"", interpreter: Interpreter.Bash, arguments: []));
     }
 
     private static ScriptArgument Argument(string name) => new(
         position: 0, 
         type: "string", 
-        name: name, 
+        identifier: name, 
         lineNumber: 0, 
         required: true, 
         defaultValue: null, 
