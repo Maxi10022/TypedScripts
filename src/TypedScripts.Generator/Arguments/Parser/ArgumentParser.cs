@@ -9,8 +9,8 @@ namespace TypedScripts.Arguments.Parser;
 public class ArgumentParser : ILineParser
 {
     private static readonly Regex ParamPattern = new(
-        // line start, optional indent, '#', optional space, '@param', then space(s)
-        @"^\s*#\s*@param\s+" + 
+        // line start, optional indent, a comment leader, optional space, '@param', then space(s)
+        CommentSyntax.LeaderPrefix + @"@param\s+" +
         
         // paramName (captured loosely so invalid identifiers are reported, not skipped), ':', paramType
         @"(?<paramName>[^\s:]+)\s*:\s*(?<paramType>\w+)" +
