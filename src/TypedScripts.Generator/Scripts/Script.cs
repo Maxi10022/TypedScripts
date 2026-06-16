@@ -1,8 +1,13 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TypedScripts.Arguments;
+using TypedScripts.Common;
+using TypedScripts.Common.Exceptions;
 using TypedScripts.Scripts.Exceptions;
 using static Microsoft.CodeAnalysis.CSharp.SyntaxFactory;
 
@@ -19,42 +24,107 @@ public class Script
     /// This scripts C# object identifier.
     /// e.g. When set to <c>MyScript</c> then codegen will generate <c>public class MyScript ...</c> .
     /// </summary>
-    public string Name { get; }
+    public SafeIdentifier Identifier { get; }
 
     /// <summary>
-    /// The file name of the code-gen script. 
+    /// The file name of the source-generated script. 
     /// </summary>
-    public string FileName => Name + "g.cs";
+    public string FileName => Identifier.Value + "g.cs";
     
     /// <summary>
     /// The shell this script must be executed with. 
     /// </summary>
-    public Interpreter Interpreter { get; }
+    public Interpreter[] Interpreters { get; }
     
     /// <summary>
     /// The scripts generated syntax.
     /// </summary>
     public CompilationUnitSyntax Syntax { get; }
 
-    public Script(string name, string scriptContent, Interpreter interpreter, ScriptArgument[] arguments)
+    private Script(
+        SafeIdentifier identifier, 
+        Interpreter[] interpreters, 
+        ScriptArgument[] arguments, 
+        CompilationUnitSyntax syntax)
     {
-        if (!SyntaxFacts.IsValidIdentifier(name))
-        {
-            throw new InvalidScriptIdentifierException(name);
-        }
-        
+        Identifier = identifier;
         Arguments = arguments;
-        Name = name;
-        Interpreter = interpreter;
-        Syntax = Build(name: name, scriptContent: scriptContent, arguments: arguments);
+        Interpreters = interpreters;
+        Syntax = syntax;
     }
 
-    public override string ToString() => Syntax.ToFullString();
+    /// <summary>
+    /// Factory method to create a new C# script object.
+    /// </summary>
+    /// <exception cref="InvalidIdentifierException">Thrown if the script identifier is invalid.</exception>
+    /// <exception cref="NoInterpreterAvailableException">Thrown if no supported interpreters are available.</exception>
+    /// <exception cref="InvalidScriptSyntaxException">Thrown if the generated syntax is invalid.</exception>
+    public static Script Create(ScriptOptions options)
+    {
+        var arguments = options.Arguments.ToArray();
+        var identifier = new SafeIdentifier(options.Identifier ?? GetFileNameIdentifier(options.FilePath));
+        var interpreters = GetInterpreterPreferences(options.Interpreters, options.FilePath);
+        var syntax = BuildSyntax(identifier, interpreters, arguments, options.Body);
+        ValidateScriptSyntax(syntax);
+        return new Script(identifier, interpreters, arguments, syntax);
+    }
 
-    private static CompilationUnitSyntax Build(string name, string scriptContent, ScriptArgument[] arguments)
+    private static string? GetFileNameIdentifier(string? filePath)
+    {
+        var fileName = Path.GetFileNameWithoutExtension(filePath);
+        if (string.IsNullOrWhiteSpace(fileName)) return null;
+
+        // Split on any run of non-alphanumeric chars (-, _, ., space, …) and
+        // upper-case the first letter of each segment to form a PascalCase identifier.
+        // Existing inner casing is preserved (e.g. "myWeb-deploy" -> "MyWebDeploy").
+        var pascalCase = string.Concat(Regex
+            .Split(fileName, "[^A-Za-z0-9]+")
+            .Where(word => word.Length > 0)
+            .Select(word => char.ToUpperInvariant(word[0]) + word.Substring(1)));
+
+        return pascalCase.Length == 0 ? null : pascalCase;
+    }
+    
+    private static Interpreter[] GetInterpreterPreferences(List<Interpreter> interpreters, string? filePath)
+    {
+        if (interpreters.Any()) return interpreters.ToArray();
+        var inferred = InferInterpreterFromExtension(filePath);
+        return inferred is null 
+            ? throw new NoInterpreterAvailableException()
+            : [ inferred.Value ];
+    }
+
+    // Fallback to extension based interpreter determination if shebang was not specified 
+    private static Interpreter? InferInterpreterFromExtension(string? filePath) =>
+        Path.GetExtension(filePath) switch
+        {
+            ".sh" => Interpreter.Bash,
+            ".bash" => Interpreter.Bash,
+            
+            _ => null
+        };
+
+    private static void ValidateScriptSyntax(CompilationUnitSyntax syntax)
+    {
+        var diagnostics = syntax
+            .GetDiagnostics()
+            .ToArray();
+
+        // Report script diagnostics if syntax contains errors 
+        if (diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error))
+        {
+            throw new InvalidScriptSyntaxException(diagnostics);
+        }
+    }
+    
+    private static CompilationUnitSyntax BuildSyntax(
+        SafeIdentifier identifier, Interpreter[] interpreters, ScriptArgument[] arguments, StringBuilder body)
     {
         // TODO complete implementation of this auto-generated template
-        // For more details the infrastructure layout must be "completed"
+        // Execute script locally/remote with explicit methods -
+        // "builder style" execution
+        // 1. first method for interpreter default value set to first script argument
+        // 2. second method takes in actual args and executes against target 
         var template = $$""""""
                         // <auto-generated/>
                         #pragma warning disable
@@ -62,23 +132,19 @@ public class Script
                         
                         namespace TypedScripts.Scripts;
                         
-                        public class {{name}} 
+                        public class {{identifier.Value}} 
                         {
                             private const string ScriptContent = """ 
-                                                                 {{scriptContent}}
+                                                                 {{body}}
                                                                  """;
                         }
                         """""";
 
-        var unit = ParseCompilationUnit(template);
-
-        var diagnostics = unit
-            .GetDiagnostics()
-            .ToArray();
-
-        // Report compilation 
-        return diagnostics.Any(x => x.Severity == DiagnosticSeverity.Error) 
-            ? throw new InvalidScriptSyntaxException(diagnostics) 
-            : unit;
+        return ParseCompilationUnit(template);
     }
+    
+    /// <summary>
+    /// Returns this script generated C# object representation. 
+    /// </summary>
+    public override string ToString() => Syntax.ToFullString();
 }
