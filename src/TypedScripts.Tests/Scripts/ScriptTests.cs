@@ -66,13 +66,17 @@ public class ScriptTests
     }
 
     [Fact]
-    public void ToString_Returns_The_Full_Generated_Syntax()
+    public void Syntax_Normalizes_Windows_Line_Endings_In_Embedded_Content()
     {
         // Arrange
-        var script = Create();
+        var script = Create(body: "echo one\r\necho two");
 
-        // Act & Assert
-        Assert.Equal(script.Syntax.ToFullString(), script.ToString());
+        // Act
+        var generated = script.ToString();
+
+        // Assert
+        Assert.Contains(@"echo one\necho two", generated);
+        Assert.DoesNotContain(@"\r", generated);
     }
 
     [Theory]
