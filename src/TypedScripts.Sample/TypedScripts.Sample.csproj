@@ -10,7 +10,7 @@
         <None Remove="DDD.UbiquitousLanguageRegistry.txt"/>
         <AdditionalFiles Include="DDD.UbiquitousLanguageRegistry.txt"/>
         <None Remove="backupDatabase.sh" />
-        <AdditionalFiles Include="backupDatabase.sh" />
+        <AdditionalFiles Include="backup-database.sh" />
     </ItemGroup>
 
     <ItemGroup>
@@ -18,7 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="TypedScripts.Runtime" Version="1.0.0-alpha" />
+      <PackageReference Include="TypedScripts" Version="1.0.0-alpha" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# @identifier BackupExample
 # @param database:string required
 # @param outputDir:string optional default="/var/backups"
 # @param port:int optional default=5432
