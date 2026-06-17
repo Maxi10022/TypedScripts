@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
-using Microsoft.CodeAnalysis.Text;
 using TypedScripts.Arguments;
+using TypedScripts.Common;
 
 namespace TypedScripts.Scripts;
 
@@ -10,7 +10,7 @@ public class ScriptOptions
     /// <summary>
     /// The script identifier.
     /// </summary>
-    public string? Identifier { get; set; }
+    public SafeIdentifier? Identifier { get; set; }
 
     /// <summary>
     /// The scripts actual body.

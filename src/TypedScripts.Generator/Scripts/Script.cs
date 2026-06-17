@@ -62,7 +62,7 @@ public class Script
     public static Script Create(ScriptOptions options)
     {
         var arguments = options.Arguments.ToArray();
-        var identifier = new SafeIdentifier(options.Identifier ?? GetFileNameIdentifier(options.FilePath));
+        var identifier = options.Identifier ?? new SafeIdentifier(GetFileNameIdentifier(options.FilePath));
         var interpreters = GetInterpreterPreferences(options.Interpreters, options.FilePath);
         var syntax = BuildSyntax(identifier, interpreters, arguments, options.Body);
         ValidateScriptSyntax(syntax);
