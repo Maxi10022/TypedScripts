@@ -141,10 +141,16 @@ public class ScriptTests
     }
 
     [Fact]
-    public void Given_Script_Content_That_Breaks_The_Template_Throws()
+    public void Syntax_Safely_Embeds_Content_Containing_Quotes()
     {
-        // Arrange & Act & Assert
-        Assert.Throws<InvalidScriptSyntaxException>(() => Create(body: "\"\"\""));
+        // Arrange
+        var script = Create(body: "echo \"\"\"");
+
+        // Act
+        var generated = script.ToString();
+
+        // Assert
+        Assert.Contains("\\\"\\\"\\\"", generated);
     }
 
     private static Script Create(
