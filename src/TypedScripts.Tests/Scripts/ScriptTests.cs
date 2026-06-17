@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using TypedScripts.Arguments;
+using TypedScripts.Common;
 using TypedScripts.Common.Exceptions;
 using TypedScripts.Scripts;
 using TypedScripts.Scripts.Exceptions;
@@ -130,11 +131,13 @@ public class ScriptTests
             Create(interpreters: [], filePath: filePath));
     }
 
-    [Fact]
-    public void Given_Invalid_Identifier_Throws()
+    [Theory]
+    [InlineData("1stPlace.sh")]
+    [InlineData("123.sh")]
+    public void Identifier_Derived_From_File_Name_With_Leading_Digit_Throws(string filePath)
     {
         // Arrange & Act & Assert
-        Assert.Throws<InvalidIdentifierException>(() => Create(identifier: "my-script"));
+        Assert.Throws<InvalidIdentifierException>(() => Create(identifier: null, filePath: filePath));
     }
 
     [Fact]
@@ -152,7 +155,7 @@ public class ScriptTests
         List<ScriptArgument>? arguments = null) =>
         Script.Create(new ScriptOptions
         {
-            Identifier = identifier,
+            Identifier = identifier is null ? null : new SafeIdentifier(identifier),
             Body = new StringBuilder(body),
             FilePath = filePath,
             Interpreters = interpreters ?? [Interpreter.Bash],
