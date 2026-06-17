@@ -8,7 +8,6 @@
 
     <ItemGroup>
         <None Remove="DDD.UbiquitousLanguageRegistry.txt"/>
-        <AdditionalFiles Include="DDD.UbiquitousLanguageRegistry.txt"/>
         <None Remove="backupDatabase.sh" />
         <AdditionalFiles Include="backup-database.sh" />
     </ItemGroup>
