@@ -99,6 +99,19 @@ public class ScriptGeneratorTests
     }
 
     [Fact]
+    public void Generate_Names_The_Generated_Source_After_The_Script_Identifier()
+    {
+        // Arrange
+        var script = new TestAdditionalFile("backup.sh", "# @identifier Example\necho hi");
+
+        // Act
+        var result = Run(script);
+
+        // Assert
+        Assert.Equal("Example.g.cs", GeneratedSources(result).Single().HintName);
+    }
+
+    [Fact]
     public void Generate_Produces_A_Source_For_Each_Script_Candidate()
     {
         // Arrange

@@ -36,7 +36,7 @@ public class ScriptTests
         var fileName = script.FileName;
 
         // Assert
-        Assert.Equal("MyScriptg.cs", fileName);
+        Assert.Equal("MyScript.g.cs", fileName);
     }
 
     [Fact]

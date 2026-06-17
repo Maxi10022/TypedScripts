@@ -30,7 +30,7 @@ public class Script
     /// <summary>
     /// The file name of the source-generated script. 
     /// </summary>
-    public string FileName => Identifier.Value + "g.cs";
+    public string FileName => Identifier.Value + ".g.cs";
     
     /// <summary>
     /// The shell this script must be executed with. 
