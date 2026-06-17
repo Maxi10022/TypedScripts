@@ -44,7 +44,7 @@ public class ScriptArgumentTests
 
     [Theory]
     [MemberData(nameof(SupportedArgumentTypesWithDefaultValue))]
-    public void Required_ScriptArgument_With_Default_Value_Compiles(string type, string defaultValue)
+    public void Required_ScriptArgument_With_Default_Value_Generates_Expected_Syntax(string type, string defaultValue)
     {
         // Arrange
         var arg = Argument(type: type, identifier: "myParameter", required: true, defaultValue: defaultValue);
@@ -60,7 +60,7 @@ public class ScriptArgumentTests
 
     [Theory]
     [MemberData(nameof(SupportedArgumentTypesWithDefaultValue))]
-    public void Optional_ScriptArgument_With_Default_Value_Compiles(string type, string defaultValue)
+    public void Optional_ScriptArgument_With_Default_Value_Generates_Expected_Syntax(string type, string defaultValue)
     {
         // Arrange
         var arg = Argument(type: type, identifier: "myParameter", required: false, defaultValue: defaultValue);
@@ -76,7 +76,7 @@ public class ScriptArgumentTests
 
     [Theory]
     [ClassData(typeof(SupportedArgumentTypes))]
-    public void Optional_ScriptArgument_With_Explicit_Empty_Default_Compiles(string type)
+    public void Optional_ScriptArgument_With_Explicit_Empty_Default_Generates_Expected_Syntax(string type)
     {
         // Arrange
         var arg = Argument(type: type, identifier: "example", required: false, defaultValue: "");
@@ -91,7 +91,7 @@ public class ScriptArgumentTests
 
     [Theory]
     [ClassData(typeof(SupportedArgumentTypes))]
-    public void Optional_ScriptArgument_With_Explicit_NULL_Default_Compiles(string type)
+    public void Optional_ScriptArgument_With_Explicit_NULL_Default_Generates_Expected_Syntax(string type)
     {
         // Arrange
         var arg = Argument(type: type, identifier: "example", required: false, defaultValue: "null");
@@ -106,7 +106,7 @@ public class ScriptArgumentTests
 
     [Theory]
     [ClassData(typeof(SupportedArgumentTypes))]
-    public void Optional_ScriptArgument_Compiles(string type)
+    public void Optional_ScriptArgument_Generates_Expected_Syntax(string type)
     {
         // Arrange
         var arg = Argument(type: type, identifier: "example", required: false, defaultValue: null);
@@ -121,7 +121,7 @@ public class ScriptArgumentTests
 
     [Theory]
     [ClassData(typeof(SupportedArgumentTypes))]
-    public void Required_ScriptArgument_Compiles(string type)
+    public void Required_ScriptArgument_Generates_Expected_Syntax(string type)
     {
         // Arrange
         var arg = Argument(type: type, identifier: "name", required: true, defaultValue: null);
