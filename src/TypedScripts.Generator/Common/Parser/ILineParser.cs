@@ -1,6 +1,8 @@
-﻿namespace TypedScripts.Common.Parser;
+﻿using Microsoft.CodeAnalysis.Text;
+
+namespace TypedScripts.Common.Parser;
 
 public interface ILineParser
 {
-    public ILineParseResult Parse(string line);
+    public ILineParseResult Parse(TextLine line);
 }

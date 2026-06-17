@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis.Text;
 using TypedScripts.Arguments.Exceptions;
 using TypedScripts.Common.Exceptions;
 using TypedScripts.Common.Parser;
@@ -28,9 +29,9 @@ public class ArgumentParser : ILineParser
         @"\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
     
-    public ILineParseResult Parse(string line)
+    public ILineParseResult Parse(TextLine line)
     {
-        var match = ParamPattern.Match(line);
+        var match = ParamPattern.Match(line.ToString());
         if (!match.Success) return ParseResults.Skip();
         var options = ExtractOptions(match);
         return TryCreateArgument(options);

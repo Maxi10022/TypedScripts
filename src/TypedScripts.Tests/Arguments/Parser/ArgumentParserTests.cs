@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis.Text;
 using TypedScripts.Arguments;
 using TypedScripts.Arguments.Parser;
 using TypedScripts.Common.Parser;
@@ -7,7 +8,8 @@ namespace TypedScripts.Tests.Arguments.Parser;
 
 public class ArgumentParserTests
 {
-    private static ILineParseResult Parse(string line) => new ArgumentParser().Parse(line);
+    private static ILineParseResult Parse(string line) =>
+        new ArgumentParser().Parse(SourceText.From(line).Lines[0]);
 
     private static ScriptArgument ParseArgument(string line) =>
         Assert.IsType<LineParseSuccess<ScriptArgument>>(Parse(line)).Value;
