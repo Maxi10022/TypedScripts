@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts", "TypedScript
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Common", "TypedScripts.Common\TypedScripts.Common.csproj", "{05ADF597-B873-423C-B99C-B4FADED5B2A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypedScripts.Reference", "TypedScripts.Reference\TypedScripts.Reference.csproj", "{1283F4BC-3B93-4E28-827B-C27B1CE08D59}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{05ADF597-B873-423C-B99C-B4FADED5B2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{05ADF597-B873-423C-B99C-B4FADED5B2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{05ADF597-B873-423C-B99C-B4FADED5B2A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1283F4BC-3B93-4E28-827B-C27B1CE08D59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1283F4BC-3B93-4E28-827B-C27B1CE08D59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1283F4BC-3B93-4E28-827B-C27B1CE08D59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1283F4BC-3B93-4E28-827B-C27B1CE08D59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
