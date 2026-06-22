@@ -20,6 +20,7 @@ public class SupportedArgumentType(string? value) : IEquatable<SupportedArgument
     [
         "string",
         "bool",
+        "byte",
         "sbyte",
         "char",
         "decimal",
