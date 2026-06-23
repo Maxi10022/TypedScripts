@@ -174,4 +174,77 @@ public class ArgumentParserTests
         // Assert
         Assert.Equal("TSARG003", failure.Descriptors[0].Id);
     }
+
+    [Fact]
+    public void Parse_Allows_Modifier_After_Default_Value()
+    {
+        // Arrange & Act
+        var arg = ParseArgument("# @param port:int default=5432 optional");
+
+        // Assert
+        Assert.Equal("int? port = 5432", arg.ToString());
+    }
+
+    [Fact]
+    public void Parse_Allows_ArgName_Before_Modifier()
+    {
+        // Arrange & Act
+        var arg = ParseArgument("# @param environment:string argName=env required");
+
+        // Assert
+        Assert.Equal("env", arg.ArgName);
+        Assert.Equal("string environment", arg.ToString());
+    }
+
+    [Fact]
+    public void Parse_Allows_Options_In_Any_Order()
+    {
+        // Arrange & Act
+        var arg = ParseArgument("# @param retries:int argName=retries default=3 optional");
+
+        // Assert
+        Assert.Equal("retries", arg.ArgName);
+        Assert.Equal("int? retries = 3", arg.ToString());
+    }
+
+    [Fact]
+    public void Parse_Preserves_Quoted_Default_Regardless_Of_Position()
+    {
+        // Arrange & Act
+        var arg = ParseArgument("# @param message:string argName=msg default=\"hello world\" optional");
+
+        // Assert
+        Assert.Equal("msg", arg.ArgName);
+        Assert.Equal("string? message = \"hello world\"", arg.ToString());
+    }
+
+    [Fact]
+    public void Parse_Treats_Modifier_Case_Insensitively()
+    {
+        // Arrange & Act
+        var arg = ParseArgument("# @param count:int REQUIRED");
+
+        // Assert
+        Assert.Equal("int count", arg.ToString());
+    }
+
+    [Fact]
+    public void Parse_Ignores_Unrecognized_Tokens()
+    {
+        // Arrange & Act
+        var arg = ParseArgument("# @param count:int required nonsense");
+
+        // Assert
+        Assert.Equal("int count", arg.ToString());
+    }
+
+    [Fact]
+    public void Parse_With_Only_Unrecognized_Trailing_Tokens_Defaults_To_Optional()
+    {
+        // Arrange & Act
+        var arg = ParseArgument("# @param count:int blah");
+
+        // Assert
+        Assert.Equal("int? count", arg.ToString());
+    }
 }
