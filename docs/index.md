@@ -4,19 +4,16 @@ layout: home
 
 hero:
   name: "TypedScripts"
-  text: "Make Shell scripts strongly typed objects"
-  tagline: The cleanest way to run Shell scripts in C#
+  text: "Make any script a strongly typed objects"
+  tagline: The cleanest way to run scripts in C#
   actions:
     - theme: brand
       text: Get Started
-      link: /markdown-examples
+      link: /get-started
 
 features:
-  - title: Feature A
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature B
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
-  - title: Feature C
-    details: Lorem ipsum dolor sit amet, consectetur adipiscing elit
+  - title: Convert scripts into strongly typed objects
+    details: Declare your scripts parameters, identifier and interpreter using comments inside your script.
+  - title: Execute scripts with a simple API
+    details: Supports local execution via Bash, PowerShell and more, as well as remote SSH execution.  
 ---
-

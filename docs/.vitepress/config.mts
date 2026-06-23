@@ -15,13 +15,30 @@ export default defineConfig({
       {
         text: 'Documentation',
         items: [
-          { text: 'Get Started', link: '/get-started' },
-          { 
-            text: "Arguments",
-            collapsed: true,
+          { text: 'Quick Start', link: '/get-started' },
+          {
+            text: 'Directives',
+            collapsed: false,
             items: [
-              { text: 'Argument Definition', link: '/argument-definition' },
-              { text: 'Supported Types', link: '/supported-argument-types' },
+              { text: 'Overview', link: '/directives/' },
+              { text: 'Parameters', link: '/directives/param' },
+              { text: 'Class name', link: '/directives/identifier' },
+              { text: 'Interpreters', link: '/directives/interpreter' },
+            ]
+          },
+          {
+            text: 'Reference',
+            collapsed: false,
+            items: [
+              { text: 'Supported types', link: '/reference/supported-types' },
+              { text: 'Diagnostics', link: '/reference/diagnostics' },
+            ]
+          },
+          {
+            text: 'Extending',
+            collapsed: false,
+            items: [
+              { text: 'Adding shells', link: '/development/adding-shells' },
             ]
           },
         ]
