@@ -11,7 +11,7 @@ public static class ScriptDiagnostics
         title: "Failed to read script content",
         messageFormat: $"Content from '{fileName}' could not be read.",
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
     
@@ -20,7 +20,7 @@ public static class ScriptDiagnostics
         title: "Invalid script identifier",
         messageFormat: ex.Message,
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
     
@@ -29,7 +29,7 @@ public static class ScriptDiagnostics
         title: "Invalid script syntax",
         messageFormat: ex.Message,
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
     
@@ -38,7 +38,7 @@ public static class ScriptDiagnostics
         title: "No interpreter available",
         messageFormat: ex.Message,
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
     
@@ -56,7 +56,7 @@ public static class ScriptDiagnostics
         title: "Unknown problem during script validation",
         messageFormat: message, 
         category: "TypedScripts",
-        DiagnosticSeverity.Error,
+        DiagnosticSeverity.Warning,
         isEnabledByDefault: true
     );
 }
