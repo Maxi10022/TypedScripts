@@ -1,9 +1,9 @@
 using System.Linq;
+using TypedScripts.Generator.Tests.Utils;
 using TypedScripts.Scripts.Detection;
-using TypedScripts.Tests.Utils;
 using Xunit;
 
-namespace TypedScripts.Tests.Scripts.Detection;
+namespace TypedScripts.Generator.Tests.Scripts.Detection;
 
 public class ScriptCandidateTests
 {

@@ -1,9 +1,9 @@
 using TypedScripts.Arguments.Exceptions;
 using TypedScripts.Arguments.ValueTypes;
-using TypedScripts.Tests.Utils;
+using TypedScripts.Generator.Tests.Utils;
 using Xunit;
 
-namespace TypedScripts.Tests.Arguments.ValueTypes;
+namespace TypedScripts.Generator.Tests.Arguments.ValueTypes;
 
 public class SupportedArgumentTypeTests
 {

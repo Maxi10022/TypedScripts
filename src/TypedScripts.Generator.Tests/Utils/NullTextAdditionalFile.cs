@@ -2,7 +2,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
-namespace TypedScripts.Tests.Utils;
+namespace TypedScripts.Generator.Tests.Utils;
 
 public class NullTextAdditionalFile(string path) : AdditionalText
 {

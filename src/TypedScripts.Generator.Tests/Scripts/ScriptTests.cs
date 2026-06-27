@@ -7,7 +7,7 @@ using TypedScripts.Scripts;
 using TypedScripts.Scripts.Exceptions;
 using Xunit;
 
-namespace TypedScripts.Tests.Scripts;
+namespace TypedScripts.Generator.Tests.Scripts;
 
 public class ScriptTests
 {

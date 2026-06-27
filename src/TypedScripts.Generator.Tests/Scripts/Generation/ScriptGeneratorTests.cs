@@ -2,10 +2,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using TypedScripts.Tests.Utils;
+using TypedScripts.Generator.Tests.Utils;
 using Xunit;
 
-namespace TypedScripts.Tests.Scripts.Generation;
+namespace TypedScripts.Generator.Tests.Scripts.Generation;
 
 public class ScriptGeneratorTests
 {

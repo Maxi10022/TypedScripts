@@ -4,10 +4,10 @@ using TypedScripts.Arguments;
 using TypedScripts.Arguments.Exceptions;
 using TypedScripts.Arguments.ValueTypes;
 using TypedScripts.Common.Exceptions;
-using TypedScripts.Tests.Utils;
+using TypedScripts.Generator.Tests.Utils;
 using Xunit;
 
-namespace TypedScripts.Tests.Arguments;
+namespace TypedScripts.Generator.Tests.Arguments;
 
 public class ScriptArgumentTests
 {

@@ -4,7 +4,7 @@ using TypedScripts.Common.Parser;
 using TypedScripts.Scripts.Parser;
 using Xunit;
 
-namespace TypedScripts.Tests.Scripts.Parser;
+namespace TypedScripts.Generator.Tests.Scripts.Parser;
 
 public class InterpreterParserTests
 {

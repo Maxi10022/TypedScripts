@@ -4,7 +4,7 @@ using TypedScripts.Arguments.Parser;
 using TypedScripts.Common.Parser;
 using Xunit;
 
-namespace TypedScripts.Tests.Arguments.Parser;
+namespace TypedScripts.Generator.Tests.Arguments.Parser;
 
 public class ArgumentParserTests
 {

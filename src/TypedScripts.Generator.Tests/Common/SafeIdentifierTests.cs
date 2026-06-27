@@ -2,7 +2,7 @@ using TypedScripts.Common;
 using TypedScripts.Common.Exceptions;
 using Xunit;
 
-namespace TypedScripts.Tests.Common;
+namespace TypedScripts.Generator.Tests.Common;
 
 public class SafeIdentifierTests
 {

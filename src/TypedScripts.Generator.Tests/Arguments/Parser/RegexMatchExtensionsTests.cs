@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 using TypedScripts.Arguments.Parser;
 using Xunit;
 
-namespace TypedScripts.Tests.Arguments.Parser;
+namespace TypedScripts.Generator.Tests.Arguments.Parser;
 
 public class RegexMatchExtensionsTests
 {
