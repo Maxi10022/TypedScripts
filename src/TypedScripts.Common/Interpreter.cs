@@ -1,4 +1,5 @@
 ﻿// ReSharper disable once CheckNamespace
+
 namespace TypedScripts;
 
 /// <summary>
@@ -9,11 +10,17 @@ public enum Interpreter
     Bash
 }
 
-public static class ShellExtensions
+public static class InterpreterExtensions
 {
-    public static string GetShellName(this Interpreter interpreter) => interpreter switch
+    public static string GetName(this Interpreter interpreter) => interpreter switch
     {
         Interpreter.Bash => "Bash",
         _ => "Undefined"
+    };
+
+    public static string GetScriptExtension(this Interpreter interpreter) => interpreter switch
+    {
+        Interpreter.Bash => ".sh",
+        _ => ".undefined",
     };
 }
