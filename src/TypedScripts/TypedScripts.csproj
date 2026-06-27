@@ -15,6 +15,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="TypedScripts.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\TypedScripts.Common\TypedScripts.Common.csproj" PrivateAssets="all" />
         <ProjectReference Include="..\TypedScripts.Generator\TypedScripts.Generator.csproj"
                           ReferenceOutputAssembly="false"
