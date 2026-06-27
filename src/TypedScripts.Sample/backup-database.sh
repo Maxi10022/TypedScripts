@@ -3,9 +3,7 @@
 # @identifier BackupExample
 # @param database:string required
 # @param outputDir:string optional default="/var/backups"
-# @param port:int optional default=5432
-# @param compress:bool optional default=true
-# @param retentionDays:int optional default=7
+# @param port:int argName=db-port default=5432
 
 set -euo pipefail
 
