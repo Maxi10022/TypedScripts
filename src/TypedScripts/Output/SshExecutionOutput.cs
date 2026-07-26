@@ -13,7 +13,6 @@ public class SshExecutionOutput(SshCommand cmd, Task execTask) : IExecutionOutpu
     
     public async Task<int> WaitForExitAsync()
     {
-        var result = cmd.BeginExecute();
         await execTask.ConfigureAwait(false);
         return cmd.ExitStatus ?? -1;
     }
