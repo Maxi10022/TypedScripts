@@ -25,9 +25,7 @@ public interface IExecutionOutput : IDisposable
     /// <b>Cancellation token passed when <c>Execute</c> was called cancels the task!</b> 
     /// </summary>
     /// <returns>The scripts exit code.</returns>
-    /// <exception cref="TaskCanceledException">
-    /// Thrown when the cancellation token passed to <see cref="IExecutor.ExecuteAsync"/> was canceled.
-    /// </exception>
+    /// <exception cref="TaskCanceledException">Thrown when an already running execution was canceled.</exception>
     public Task<int> WaitForExitAsync();
 
     /// <summary>
