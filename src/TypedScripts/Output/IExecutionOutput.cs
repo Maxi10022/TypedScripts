@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using TypedScripts.Executors;
 
 namespace TypedScripts.Output;
 
@@ -24,5 +25,13 @@ public interface IExecutionOutput : IDisposable
     /// <b>Cancellation token passed when <c>Execute</c> was called cancels the task!</b> 
     /// </summary>
     /// <returns>The scripts exit code.</returns>
-    public Task<int> WaitForExitAsync(); 
+    /// <exception cref="TaskCanceledException">
+    /// Thrown when the cancellation token passed to <see cref="IExecutor.ExecuteAsync"/> was canceled.
+    /// </exception>
+    public Task<int> WaitForExitAsync();
+
+    /// <summary>
+    /// Cancels the scripts execution.
+    /// </summary>
+    public void Cancel();
 }
