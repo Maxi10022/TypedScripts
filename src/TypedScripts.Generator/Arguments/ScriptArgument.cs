@@ -96,6 +96,7 @@ public class ScriptArgument
             {
                 "string" => LiteralExpression(SyntaxKind.StringLiteralExpression, Literal(defaultValue)),
                 "char" => LiteralExpression(SyntaxKind.CharacterLiteralExpression, Literal(char.Parse(defaultValue))),
+                "byte" => Num(Literal(byte.Parse(defaultValue))),
                 "sbyte" => Num(Literal(sbyte.Parse(defaultValue))),
                 "short" => Num(Literal(short.Parse(defaultValue))),
                 "ushort" => Num(Literal(ushort.Parse(defaultValue))),

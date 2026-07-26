@@ -163,7 +163,7 @@ public class ScriptArgumentTests
             "string" => "example",
             "bool" => "true",
             "char" => "x",
-            "sbyte" or "short" or "ushort" or "int" or "uint" or "long" or "ulong" or "float" or "double" or "decimal" => "10",
+            "sbyte" or "byte" or "short" or "ushort" or "int" or "uint" or "long" or "ulong" or "float" or "double" or "decimal" => "10",
             _ => throw new NotSupportedException($"No default value mapping for type '{type}'")
         };
 
