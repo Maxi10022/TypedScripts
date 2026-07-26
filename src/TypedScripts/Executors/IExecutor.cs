@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using TypedScripts.Output;
 
@@ -22,5 +23,7 @@ public interface IExecutor
     /// <param name="options">Options carrying script data.</param>
     /// <param name="ct">Cancellation token used to cancel the async <see cref="IExecutionOutput"/>.</param>
     /// <returns>Instance of <see cref="IExecutionOutput"/>.</returns>
+    /// <exception cref="OperationCanceledException">Thrown when cancellation was requested before execution.</exception>
+    /// <exception cref="TaskCanceledException">Thrown when an already running execution was canceled.</exception>
     public Task<IExecutionOutput> ExecuteAsync(ExecutionOptions options, CancellationToken ct = default);
 }
