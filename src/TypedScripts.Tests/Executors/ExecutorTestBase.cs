@@ -49,7 +49,7 @@ public abstract class ExecutorTestBase(IntegrationFixture fixture) : Integration
     }
 
     [Fact]
-    public async Task Cancellation_Stops_Script_Execution()
+    public async Task Cancellation_Token_Stops_Script_Midst_Execution()
     {
         // Arrange
         var executor = CreateExecutor();
@@ -64,10 +64,26 @@ public abstract class ExecutorTestBase(IntegrationFixture fixture) : Integration
             await cancellation.CancelAsync();
             await exit;
         });
-
-        // Assert: IExecutor.ExecuteAsync documents TaskCanceledException for an
-        // already-running execution being canceled.
+        
         Assert.IsType<TaskCanceledException>(exception);
+    }
+
+    [Fact]
+    public async Task Cancel_Stops_Script_Midst_Execution()
+    {
+        // Arrange
+        var executor = CreateExecutor();
+        var options = BuildExecutionOptions(ScriptWithInfiniteLoop());
+        var output = await executor.ExecuteAsync(options);
+
+        // Act
+        var waitForExit = output.WaitForExitAsync();
+        output.Cancel();
+
+        // Assert
+        var completed = await Task.WhenAny(waitForExit, Task.Delay(TimeSpan.FromSeconds(10)));
+        Assert.Same(waitForExit, completed);
+        await Assert.ThrowsAsync<TaskCanceledException>(() => waitForExit);
     }
 
     [Fact]
@@ -154,7 +170,7 @@ public abstract class ExecutorTestBase(IntegrationFixture fixture) : Integration
     }
 
     [Fact]
-    public async Task Executor_Fails_Fast_When_Token_Already_Cancelled()
+    public async Task Executor_Throws_Operation_Canceled_When_Token_Cancelled_Before_Script_Execution()
     {
         // Arrange
         var executor = CreateExecutor();
@@ -218,9 +234,7 @@ public abstract class ExecutorTestBase(IntegrationFixture fixture) : Integration
         var marker = new byte[PreCancelOutputByteCount];
         await output.StandardOutput.ReadExactlyAsync(marker);
         await cancellation.CancelAsync();
-
-        // Assert: IExecutor.ExecuteAsync documents TaskCanceledException for an
-        // already-running execution being canceled.
+        
         await Assert.ThrowsAsync<TaskCanceledException>(output.WaitForExitAsync);
         Assert.All(marker, b => Assert.Equal((byte)'x', b));
     }
@@ -236,12 +250,12 @@ public abstract class ExecutorTestBase(IntegrationFixture fixture) : Integration
         // Act
         output.Dispose();
 
-        // Assert: an infinite-loop script only ever settles WaitForExitAsync if Dispose actually stopped it.
+        // Assert
         var waitForExit = output.WaitForExitAsync();
         var completed = await Task.WhenAny(waitForExit, Task.Delay(TimeSpan.FromSeconds(10)));
         Assert.Same(waitForExit, completed);
     }
-
+    
     private static async Task<(string StandardOutput, string StandardError, int ExitCode)> ReadToCompletionAsync(
         IExecutionOutput output)
     {
