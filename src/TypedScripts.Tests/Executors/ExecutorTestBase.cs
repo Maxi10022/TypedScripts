@@ -245,12 +245,9 @@ public abstract class ExecutorTestBase(IntegrationFixture fixture) : Integration
     private static async Task<(string StandardOutput, string StandardError, int ExitCode)> ReadToCompletionAsync(
         IExecutionOutput output)
     {
-        var stdOutTask = new StreamReader(output.StandardOutput).ReadToEndAsync();
-        var stdErrTask = new StreamReader(output.StandardError).ReadToEndAsync();
-
         var exitCode = await output.WaitForExitAsync();
-        var stdOut = await stdOutTask;
-        var stdErr = await stdErrTask;
+        var stdOut = await new StreamReader(output.StandardOutput).ReadToEndAsync();
+        var stdErr = await new StreamReader(output.StandardError).ReadToEndAsync();
 
         return (stdOut, stdErr, exitCode);
     }
